@@ -1,0 +1,31 @@
+{
+  "name": "webmate-sdk-js",
+  "version": "0.1.0",
+  "description": "An SDK for communicating with the webmate SDK in Javascript / Typescript",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "github.com/webmate-io/webmate-sdk-js.git"
+  },
+  "author": "Max Fellinger",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc"
+  },
+  "private": true,
+  "dependencies": {
+    "@types/request-promise-native": "1.0.15",
+    "request-promise-native": "1.0.5",
+    "request": "2.88.0"
+  },
+  "devDependencies": {
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.2.3",
+    "ts-node": "3.3.0",
+    "tslib": "1.7.1",
+    "tslint": "5.7.0",
+    "typescript": "3.0.1"
+  }
+}
