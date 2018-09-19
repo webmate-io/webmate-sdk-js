@@ -38,6 +38,7 @@ jspm_packages/
 
 # TypeScript v1 declaration files
 typings/
+/dist
 
 # Optional npm cache directory
 .npm
@@ -59,3 +60,9 @@ typings/
 
 # next.js build output
 .next
+
+# idea project data
+.idea
+webmate-sdk-js.iml
+
+.DS_Store
