@@ -4,6 +4,8 @@ import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
 import {BrowserSessionId} from "../types";
 import {BrowserSessionStateExtractionConfig} from "./browser-session-state-extraction-config";
+import {Map} from 'immutable';
+
 const sleep = require('util').promisify(setTimeout);
 
 
@@ -35,9 +37,9 @@ class BrowserSessionApiClient extends WebmateAPIClient{
     public async createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
                        config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)) {
 
-        let params = new Map([
-            ["browserSessionId", browserSessionId]
-        ]);
+        let params = Map({
+            "browserSessionId": browserSessionId
+        });
 
 
         let body = {
@@ -47,7 +49,7 @@ class BrowserSessionApiClient extends WebmateAPIClient{
 
 
         let response = this.sendPOST(this.createStateTemplate, params, body);
-        return await this.waitForStateExtractionResponse(browserSessionId, timeout, response);
+        return await this.waitForStateExtractionResponse(browserSessionId, timeout, response.toPromise());
     }
 
     public async waitForStateExtractionResponse(browserSessionId: BrowserSessionId, timeout: number, response: Promise<any>): Promise<boolean> {
@@ -57,10 +59,10 @@ class BrowserSessionApiClient extends WebmateAPIClient{
 
         for (let id of r) {
             while(true) {
-                let params = new Map([
-                    ["browserSessionId", browserSessionId],
-                    ["browserSessionArtifactId", id]
-                ]);
+                let params = Map({
+                    "browserSessionId": browserSessionId,
+                    "browserSessionArtifactId": id
+                });
 
                 if (await this.sendGET(this.checkStateProgressTemplate, params)) {
                     break;

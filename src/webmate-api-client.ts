@@ -2,6 +2,9 @@ import {WebmateAuthInfo} from "./webmate-auth-info";
 import {WebmateEnvironment} from "./webmate-environment";
 import * as request from "request-promise-native";
 import {URL} from "url";
+import {Map} from "immutable";
+import {Observable, from as observableFrom} from "rxjs";
+
 
 
 export class WebmateAPIClient {
@@ -25,9 +28,9 @@ export class WebmateAPIClient {
         if (urlParams !== undefined) {
             options['qs'] = {};
 
-            for (let [key, value] of urlParams) {
-                options.qs[key] = value;
-            }
+            urlParams.forEach((value, key) => {
+                options.qs[key || ""] = value;
+            });
         }
 
         if (body !== undefined) {
@@ -39,19 +42,19 @@ export class WebmateAPIClient {
 
 
 
-    public sendGET(schema: UriTemplate, params: Map<string, string>): Promise<any> {
+    public sendGET(schema: UriTemplate, params: Map<string, string>): Observable<any> {
         let options = this.prepareRequest(schema, params);
-        return request.get(options).promise();
+        return observableFrom(request.get(options).promise());
     }
 
-    public sendPOST(schema: UriTemplate, params: Map<string, string>, body?: Object, urlParams?: Map<string, string>): Promise<any> {
+    public sendPOST(schema: UriTemplate, params: Map<string, string>, body?: Object, urlParams?: Map<string, string>): Observable<any> {
         let options = this.prepareRequest(schema, params, body, urlParams);
-        return request.post(options).promise();
+        return observableFrom(request.post(options).promise());
     }
 
-    public sendDELETE(schema: UriTemplate, params: Map<string, string>): Promise<any> {
+    public sendDELETE(schema: UriTemplate, params: Map<string, string>): Observable<any> {
         let options = this.prepareRequest(schema, params);
-        return request.delete(options).promise();
+        return observableFrom(request.delete(options).promise());
     }
 
 }
@@ -64,9 +67,9 @@ export class UriTemplate {
         let paramPrologue = "${";
         let paramEpilogue = "}";
 
-        for (let [key, value] of params) {
-            template = template.replace(paramPrologue + key + paramEpilogue, value);
-        }
+        params.forEach((value, key) => {
+            template = template.replace(paramPrologue + key + paramEpilogue, value || "");
+        });
 
         if (template.indexOf(paramPrologue) !== -1) {
             throw new Error("At least one parameter of [" + params.keys() + "] could not be matched in schema " + template);
