@@ -5,6 +5,7 @@ import {WebmateEnvironment} from "../webmate-environment";
 import {BrowserSessionId} from "../types";
 import {BrowserSessionStateExtractionConfig} from "./browser-session-state-extraction-config";
 import {Map} from 'immutable';
+import {defer, Observable} from "rxjs";
 
 const sleep = require('util').promisify(setTimeout);
 
@@ -16,9 +17,13 @@ export class BrowserSessionClient {
     constructor(private session: WebmateAPISession) {
     }
 
-    public async createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
-                       config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)): Promise<boolean> {
-        return await this.apiClient.createState(browserSessionId, stateName, timeout, config);
+    public createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
+                       config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)): Observable<boolean> {
+        return this.apiClient.createState(browserSessionId, stateName, timeout, config);
+    }
+
+    public terminateSession(browserSessionId: BrowserSessionId): Observable<boolean> {
+        return this.apiClient.terminateSession(browserSessionId);
     }
 
 }
@@ -34,8 +39,8 @@ class BrowserSessionApiClient extends WebmateAPIClient{
         super(authInfo, environment);
     }
 
-    public async createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
-                       config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)) {
+    public createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
+                       config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)): Observable<boolean> {
 
         let params = Map({
             "browserSessionId": browserSessionId
@@ -49,7 +54,7 @@ class BrowserSessionApiClient extends WebmateAPIClient{
 
 
         let response = this.sendPOST(this.createStateTemplate, params, body);
-        return await this.waitForStateExtractionResponse(browserSessionId, timeout, response.toPromise());
+        return defer(() => this.waitForStateExtractionResponse(browserSessionId, timeout, response.toPromise()));
     }
 
     public async waitForStateExtractionResponse(browserSessionId: BrowserSessionId, timeout: number, response: Promise<any>): Promise<boolean> {
@@ -77,6 +82,17 @@ class BrowserSessionApiClient extends WebmateAPIClient{
         return true;
     }
 
+    public terminateSession(browserSessionId: BrowserSessionId): Observable<boolean> {
+        let params = Map({
+            browserSessionId: browserSessionId
+        });
+        let queryParams  = Map({
+            undefined: "terminate"
+        });
+        let body = {};
+
+        return this.sendPOST(this.terminateBrowsersessionTemplate, params, body, queryParams);
+    }
 
 
 }

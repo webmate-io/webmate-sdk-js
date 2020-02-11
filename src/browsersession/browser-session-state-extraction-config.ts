@@ -15,7 +15,8 @@ export class BrowserSessionStateExtractionConfig {
 
 export class ScreenshotConfig {
     public constructor(public fullPage: boolean = true,
-                       public hideFixedElements: boolean = true) {
+                       public hideFixedElements: boolean = true,
+                       public useTranslateYScrollStrategy: boolean = false) {
     }
 }
 

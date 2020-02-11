@@ -1,7 +1,7 @@
 import {BrowserSessionId} from "../../types";
-import {JobInput} from "../job-input";
+import {WellKnownJobInput} from "../well-known-job-input";
 
-export class RegressionJobInput implements JobInput {
+export class RegressionJobInput implements WellKnownJobInput {
     name: string = "browsersession_regression_analysis";
     values: Object;
 

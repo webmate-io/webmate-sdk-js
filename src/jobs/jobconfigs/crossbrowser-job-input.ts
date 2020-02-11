@@ -1,7 +1,7 @@
 import {BrowserSessionId} from "../../types";
-import {JobInput} from "../job-input";
+import {WellKnownJobInput} from "../well-known-job-input";
 
-export class CrossbrowserJobInput implements JobInput {
+export class CrossbrowserJobInput implements WellKnownJobInput {
     name: string = "browsersession_crossbrowser_analysis";
     values: Object;
 

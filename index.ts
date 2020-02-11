@@ -6,7 +6,7 @@ export * from './src/types';
 export * from './src/browsersession/browser-session-client';
 export * from './src/browsersession/browser-session-state-extraction-config';
 export * from './src/jobs/job-engine';
-export * from './src/jobs/job-input';
+export * from './src/jobs/well-known-job-input';
 export * from './src/jobs/jobconfigs/crossbrowser-job-input';
 export * from './src/jobs/jobconfigs/regression-job-input';
 export * from './src/webmate-api-session';

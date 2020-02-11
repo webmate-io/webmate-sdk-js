@@ -2,7 +2,7 @@ import {WebmateAPISession} from "../webmate-api-session";
 import {UriTemplate, WebmateAPIClient} from "../webmate-api-client";
 import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
-import {ProjectId, TestResultId} from "../types";
+import {ProjectId, TestResultId, TestRunId} from "../types";
 import {List, Map} from "immutable";
 import {Test, TestId, TestResult} from "./testmgmt-types";
 import {Observable, from as observableFrom} from "rxjs";
@@ -33,18 +33,10 @@ export class TestmgmtClient {
     /**
      * Retrieve the test results for the given test and the test run with the given index.
      */
-    getTestResults(testId: TestId, index: number): Observable<List<TestResult>> {
-        return this.apiClient.getTestResults(testId, index).pipe(map(result => {
+    getTestResults(testRunId: TestRunId): Observable<List<TestResult>> {
+        return this.apiClient.getTestResults(testRunId).pipe(map(result => {
            return List(result);
         }));
-    }
-
-    createTagRule(projectId: ProjectId, query: string, target: any, testId?: TestId, startTestRunIndex?: number): Observable<any> {
-        return this.apiClient.createTagRule(projectId, query, target, testId, startTestRunIndex);
-    }
-
-    createFilterRule(projectId: ProjectId, query: string, testId?: TestId, startTestRunIndex?: number): Observable<any> {
-        return this.apiClient.createTagRule(projectId, query, [{filtered: true}], testId, startTestRunIndex);
     }
 
 }
@@ -54,7 +46,7 @@ class TestmgmtApiClient extends WebmateAPIClient {
 
     private getTestTemplate = new UriTemplate("/testmgmt/tests/${testId}");
 
-    private getTestResultsTemplate = new UriTemplate("/testmgmt/tests/${testId}/testruns/${testRunIdx}/results");
+    private getTestResultsTemplate = new UriTemplate("/testmgmt/testruns/${testRunId}/results");
 
     private createTagRuleTemplate = new UriTemplate("/projects/${projectId}/testmgmt/testresult-tagrules");
 
@@ -69,43 +61,18 @@ class TestmgmtApiClient extends WebmateAPIClient {
         return this.sendGET(this.getTestsInProjectTemplate, params);
     }
 
-    getTest(testId: TestId): Observable<any> {
+    getTest(testId: TestId): Observable<Test> {
         let params = Map({
             "testId": testId
         });
         return this.sendGET(this.getTestTemplate, params);
     }
 
-    getTestResults(testId: TestId, index: number): Observable<any[]> {
+    getTestResults(testRunId: TestRunId): Observable<TestResult[]> {
         let params = Map({
-           "testId": testId,
-           "testRunIdx": '' + index
+           "testRunId": testRunId
         });
-        return this.sendGET(this.getTestResultsTemplate, params);
+        return this.sendGET(this.getTestResultsTemplate, params).pipe(map(r => r.value));
     }
 
-    createTagRule(projectId: ProjectId, query: string, target: any, testId?: TestId, startTestRunIndex?: number): Observable<any> {
-        let params = Map({
-            "projectId": projectId
-        });
-
-        let body = {
-            testId: testId,
-            startTestRunIdx: startTestRunIndex,
-            query: query.trim(),
-            target: target
-        };
-
-        if (testId) {
-            body['testId'] = testId;
-        }
-        if (startTestRunIndex) {
-            body['startTestRunIdx'] = startTestRunIndex;
-        }
-
-        console.log("HHHH");
-        console.log(params);
-        console.log(body);
-        return this.sendPOST(this.createTagRuleTemplate, params, body);
-    }
 }
