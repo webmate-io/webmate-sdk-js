@@ -16,10 +16,22 @@ export class MailTestClient {
 
     constructor(private session: WebmateAPISession) {}
 
+    /**
+     * Create a TestMail that can be used in a TestRun.
+     * @param projectId Id of Project.
+     * @param testRunId Id of TestRun.
+     * @return email address associated with project and testrun.
+     */
     public createTestMailAddress(projectId: ProjectId, testRunId: TestRunId): Observable<TestMailAddress> {
         return this.apiClient.createTestMailAddressInProject(projectId, testRunId).pipe(tap(address => this.testMailAddress = address));
     }
 
+    /**
+     * Get emails for the test mail adress in the given TestRun and project
+     * @param projectId Project id.
+     * @param testRunId Id of TestRun.
+     * @return list of TestMails
+     */
     public getMailsInTestRun(projectId: ProjectId, testRunId: TestRunId): Observable<Array<TestMail>> {
         return this.session.artifact.queryArtifacts(projectId, [ArtifactType.fromString("Mail.MailContent")], testRunId, undefined)
             .pipe(mergeMap(arr => arr.length == 0 ? of([]) : combineLatest(arr.map(info => this.session.artifact.getArtifact(info.id).pipe(map(a => TestMail.fromArtifact(a)))))))

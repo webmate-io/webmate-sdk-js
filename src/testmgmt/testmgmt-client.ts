@@ -7,6 +7,7 @@ import {List, Map} from "immutable";
 import {Test, TestId, TestResult} from "./testmgmt-types";
 import {Observable, from as observableFrom} from "rxjs";
 import {map} from "rxjs/operators";
+import {TestInfo} from "../../dist/src/testmgmt/testmgmt-types";
 
 /**
  * Facade of the webmate TestMgmt subsystem, which provides access to information about Tests, TestRuns and
@@ -15,23 +16,35 @@ import {map} from "rxjs/operators";
 export class TestmgmtClient {
     private apiClient: TestmgmtApiClient = new TestmgmtApiClient(this.session.authInfo, this.session.environment);
 
+    /**
+     * Creates a TestMgmtClient based on a WebmateApiSession
+     * @param session The WebmateApiSession used by the TestMgmtClient
+     */
     constructor(private session: WebmateAPISession) {
-
     }
 
     /**
-     * Get a list of TestIds available in project.
+     * Retrieve Tests in project with id
+     * @param projectId
+     * @return Test
      */
-    getTestsInProject(projectId: ProjectId): Observable<List<TestId>> {
-        return this.apiClient.getTestsInProject(projectId).pipe(map((ids => List(ids))));
+    getTestsInProject(projectId: ProjectId): Observable<List<TestInfo>> {
+        return this.apiClient.getTestsInProject(projectId).pipe(map((infos => List(infos))));
     }
 
+    /**
+     * Retrieve Test with id
+     * @param testId Id of Test.
+     * @return Test
+     */
     getTest(testId: TestId): Observable<Test> {
         return this.apiClient.getTest(testId);
     }
 
     /**
-     * Retrieve the test results for the given test and the test run with the given index.
+     * Retrieve list of TestResults for given test and test run.
+     * @param testRunId Id of TestRun.
+     * @return List of TestResults
      */
     getTestResults(testRunId: TestRunId): Observable<List<TestResult>> {
         return this.apiClient.getTestResults(testRunId).pipe(map(result => {
@@ -54,7 +67,7 @@ class TestmgmtApiClient extends WebmateAPIClient {
         super(authInfo, environment);
     }
 
-    getTestsInProject(projectId: ProjectId): Observable<TestId[]> {
+    getTestsInProject(projectId: ProjectId): Observable<TestInfo[]> {
         let params = Map({
             "projectId": projectId
         });

@@ -16,6 +16,13 @@ export class WebmateAPISession {
     public artifact: ArtifactClient;
     public mailTest: MailTestClient;
 
+    /**
+     * Constructor to create a new WebmateAPISession.
+     * The session is used to access all functionality of webmate.
+     *
+     * @param authInfo an instance of WebmateAuthInfo which contains the users credentials
+     * @param environment an instance of WebmateEnvironment which contains the url of webmate
+     */
     constructor(public authInfo: WebmateAuthInfo, public environment: WebmateEnvironment) {
         this.jobEngine = new JobEngine(this);
         this.browserSession = new BrowserSessionClient(this);

@@ -13,15 +13,30 @@ const sleep = require('util').promisify(setTimeout);
 export class BrowserSessionClient {
     private apiClient: BrowserSessionApiClient = new BrowserSessionApiClient(this.session.authInfo, this.session.environment);
 
-
+    /**
+     * Creates a BrowserSessionClient based on a WebmateApiSession
+     * @param session The WebmateApiSession the BrowserSessionClient is supposed to be based on
+     */
     constructor(private session: WebmateAPISession) {
     }
 
+    /**
+     * Create a new State for the given BrowserSession.
+     * @param browserSessionId BrowserSession, in which the state should be extracted.
+     * @param stateName Label for state (should be unique for BrowserSession, otherwise some tests could get confused).
+     * @param timeout Maximal amount of time to wait for the state extraction to complete in milliseconds. Defaults to 300000ms(5 min.)
+     * @param browserSessionStateExtractionConfig configuration controlling the state extraction process. See {@link BrowserSessionStateExtractionConfig}.
+     */
     public createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
                        config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)): Observable<boolean> {
         return this.apiClient.createState(browserSessionId, stateName, timeout, config);
     }
 
+    /**
+     * Terminate the given BrowserSession
+     * @param browserSessionId The Id for the BrowserSession that is supposed to be termianted
+     * @return true if the Browsersession was successfully terminated
+     */
     public terminateSession(browserSessionId: BrowserSessionId): Observable<boolean> {
         return this.apiClient.terminateSession(browserSessionId);
     }

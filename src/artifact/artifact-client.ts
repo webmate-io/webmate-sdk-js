@@ -11,17 +11,34 @@ export class ArtifactClient {
 
     private apiClient = new ArtifactApiClient(this.session.authInfo, this.session.environment);
 
+    /**
+     * Creates an ArtifactClient based on a WebmateApiSession
+     * @param session The WebmateApiSession used by the ArtifactClient
+     */
     constructor(private session: WebmateAPISession) {}
 
+    /**
+     * Retrieve Artifact infos associated with test run and browser session in project
+     *
+     * @param id project id
+     * @param artifactTypes Types of artifacts to retrieve. If empty, artifacts of all types are retrieved.
+     * @param associatedTestRun testRunId associated with artifacts. (Optional)
+     * @param associatedBrowserSession browserSessionId associated with artifacts. (Optional)
+     * @return artifactInfo array
+     */
     public queryArtifacts(id: ProjectId, artifactTypes: Array<ArtifactType>, associatedTestRun?: TestRunId, associatedBrowserSession?: BrowserSessionId): Observable<Array<ArtifactInfo>> {
         return this.apiClient.queryArtifacts(id, artifactTypes, associatedTestRun, associatedBrowserSession);
     }
 
+    /**
+     * Retrieve Artifact with id
+     *
+     * @param id Id of Artifact.
+     * @return Artifact
+     */
     public getArtifact(id: ArtifactId): Observable<Artifact> {
         return this.apiClient.getArtifact(id);
     }
-
-
 }
 
 export class ArtifactApiClient extends WebmateAPIClient {
