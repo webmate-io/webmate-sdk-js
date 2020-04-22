@@ -1,4 +1,4 @@
-export interface JobInput {
+export interface WellKnownJobInput {
     name: string
     values: Object
 }

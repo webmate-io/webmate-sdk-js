@@ -5,6 +5,7 @@ import {WebmateEnvironment} from "../webmate-environment";
 import {BrowserSessionId} from "../types";
 import {BrowserSessionStateExtractionConfig} from "./browser-session-state-extraction-config";
 import {Map} from 'immutable';
+import {defer, Observable} from "rxjs";
 
 const sleep = require('util').promisify(setTimeout);
 
@@ -12,13 +13,32 @@ const sleep = require('util').promisify(setTimeout);
 export class BrowserSessionClient {
     private apiClient: BrowserSessionApiClient = new BrowserSessionApiClient(this.session.authInfo, this.session.environment);
 
-
+    /**
+     * Creates a BrowserSessionClient based on a WebmateApiSession
+     * @param session The WebmateApiSession the BrowserSessionClient is supposed to be based on
+     */
     constructor(private session: WebmateAPISession) {
     }
 
-    public async createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
-                       config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)): Promise<boolean> {
-        return await this.apiClient.createState(browserSessionId, stateName, timeout, config);
+    /**
+     * Create a new State for the given BrowserSession.
+     * @param browserSessionId BrowserSession, in which the state should be extracted.
+     * @param stateName Label for state (should be unique for BrowserSession, otherwise some tests could get confused).
+     * @param timeout Maximal amount of time to wait for the state extraction to complete in milliseconds. Defaults to 300000ms(5 min.)
+     * @param browserSessionStateExtractionConfig configuration controlling the state extraction process. See {@link BrowserSessionStateExtractionConfig}.
+     */
+    public createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
+                       config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)): Observable<boolean> {
+        return this.apiClient.createState(browserSessionId, stateName, timeout, config);
+    }
+
+    /**
+     * Terminate the given BrowserSession
+     * @param browserSessionId The Id for the BrowserSession that is supposed to be termianted
+     * @return true if the Browsersession was successfully terminated
+     */
+    public terminateSession(browserSessionId: BrowserSessionId): Observable<boolean> {
+        return this.apiClient.terminateSession(browserSessionId);
     }
 
 }
@@ -34,8 +54,8 @@ class BrowserSessionApiClient extends WebmateAPIClient{
         super(authInfo, environment);
     }
 
-    public async createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
-                       config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)) {
+    public createState(browserSessionId: BrowserSessionId, stateName: string, timeout: number = 5*60*1000,
+                       config: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)): Observable<boolean> {
 
         let params = Map({
             "browserSessionId": browserSessionId
@@ -49,7 +69,7 @@ class BrowserSessionApiClient extends WebmateAPIClient{
 
 
         let response = this.sendPOST(this.createStateTemplate, params, body);
-        return await this.waitForStateExtractionResponse(browserSessionId, timeout, response.toPromise());
+        return defer(() => this.waitForStateExtractionResponse(browserSessionId, timeout, response.toPromise()));
     }
 
     public async waitForStateExtractionResponse(browserSessionId: BrowserSessionId, timeout: number, response: Promise<any>): Promise<boolean> {
@@ -77,6 +97,17 @@ class BrowserSessionApiClient extends WebmateAPIClient{
         return true;
     }
 
+    public terminateSession(browserSessionId: BrowserSessionId): Observable<boolean> {
+        let params = Map({
+            browserSessionId: browserSessionId
+        });
+        let queryParams  = Map({
+            undefined: "terminate"
+        });
+        let body = {};
+
+        return this.sendPOST(this.terminateBrowsersessionTemplate, params, body, queryParams);
+    }
 
 
 }

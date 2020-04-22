@@ -1,7 +1,10 @@
+export type ArtifactId = string;
 export type BrowserSessionId = string;
 export type BrowserSessionArtifactId = string;
 export type BrowserSessionStateId = string | undefined;
 export type DateTime = string;
+export type DeviceId = string;
+export type DeviceTemplateId = string;
 export type JobId = string;
 export type JobRunId = string;
 export type JobConfigName = string;

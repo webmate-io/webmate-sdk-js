@@ -1,5 +1,6 @@
 import {BrowserSessionArtifactId, DateTime, ProjectId, TestResultId, TestResultType, TestRunId, UserId} from "../types";
 import {List} from "immutable";
+import {Tag} from "../tag";
 
 export type TestId = string;
 
@@ -39,8 +40,10 @@ export interface Test {
 
 export interface TestResult {
     id: TestResultId,
-    testRunInfo: TestRunInfo,
+    testId: TestId,
+    testRunId: TestRunId,
     issueType: TestResultType,
     properties: any,
-    associatedArtifacts: List<BrowserSessionArtifactId>
+    associatedArtifacts: List<BrowserSessionArtifactId>,
+    tags: List<Tag>
 }

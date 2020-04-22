@@ -12,6 +12,7 @@ There is no official version of the webmate Javascript SDK, yet. This is a previ
 
 This SDK pre-release gives access to a small subset of the features available in the API. The SDK will be completed over time.
 
+For a list of recent change refer to the [changelog](CHANGES.md)
 
 ## Using the SDK in your Project
 

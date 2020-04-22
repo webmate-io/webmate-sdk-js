@@ -6,11 +6,12 @@ export interface JobRunSummary {
     state: string,
     creator: UserId,
     creationTime: DateTime,
+    startTime: DateTime | undefined,
     endTime: DateTime | undefined,
     lastUpdateTime: DateTime | undefined,
     failureMessage: string | undefined,
     inputPorts: any,
     testId: TestId,
-    optTestRunInfo: TestRunInfo | undefined,
+    testRunId: TestRunId,
     summaryInformation: any
 }

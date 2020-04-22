@@ -42,8 +42,8 @@ export class WebmateAPIClient {
 
 
 
-    public sendGET(schema: UriTemplate, params: Map<string, string>): Observable<any> {
-        let options = this.prepareRequest(schema, params);
+    public sendGET(schema: UriTemplate, params: Map<string, string>, urlParams?: Map<string, string>): Observable<any> {
+        let options = this.prepareRequest(schema, params, undefined, urlParams);
         return observableFrom(request.get(options).promise());
     }
 
