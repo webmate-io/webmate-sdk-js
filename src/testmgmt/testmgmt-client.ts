@@ -7,7 +7,6 @@ import {List, Map} from "immutable";
 import {Test, TestId, TestInfo, TestResult} from "./testmgmt-types";
 import {Observable, from as observableFrom} from "rxjs";
 import {map} from "rxjs/operators";
-import {TestInfo} from "../../dist/src/testmgmt/testmgmt-types";
 
 /**
  * Facade of the webmate TestMgmt subsystem, which provides access to information about Tests, TestRuns and
