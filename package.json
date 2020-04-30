@@ -13,7 +13,6 @@
   "scripts": {
     "build": "tsc"
   },
-  "private": true,
   "dependencies": {
     "@types/request-promise-native": "1.0.15",
     "request-promise-native": "1.0.5",
