@@ -4,7 +4,7 @@ import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
 import {ProjectId, TestResultId, TestRunId} from "../types";
 import {List, Map} from "immutable";
-import {Test, TestId, TestResult} from "./testmgmt-types";
+import {Test, TestId, TestInfo, TestResult} from "./testmgmt-types";
 import {Observable, from as observableFrom} from "rxjs";
 import {map} from "rxjs/operators";
 import {TestInfo} from "../../dist/src/testmgmt/testmgmt-types";
