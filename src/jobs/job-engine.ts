@@ -6,7 +6,7 @@ import {JobConfigName, JobId, JobRunId, ProjectId} from "../types";
 import {WellKnownJobInput} from "./well-known-job-input";
 import {Observable} from "rxjs";
 import {List, Map} from "immutable";
-import {JobRunSummary} from "./job-types";
+import {JobRunSummary} from "./job-run-summary";
 import {map, mergeMap} from "rxjs/operators";
 
 export class JobEngine {

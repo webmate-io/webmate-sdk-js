@@ -15,21 +15,21 @@ export class CrossbrowserJobInput implements WellKnownJobInput {
         }
 
         this.values = {
-            enabledynamicelementsfilter: {
-                type: "Boolean",
-                data: filterDynamicElements
-            },
             referenceSession: {
                 type: "BrowserSessionRef",
                 data: referenceSession
+            },
+            compareSessions: {
+                type: "List[BrowserSessionRef]",
+                data: compareSessionsObject
             },
             matchingType: {
                 type: "String",
                 data: "tag"
             },
-            compareSessions: {
-                type: "List[BrowserSessionRef]",
-                data: compareSessionsObject
+            enabledynamicelementsfilter: {
+                type: "Boolean",
+                data: filterDynamicElements
             }
         };
     }

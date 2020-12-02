@@ -1,6 +1,6 @@
 {
-  "name": "webmate-sdk-js",
-  "version": "0.28.0",
+  "name": "webmate-sdk-js-test",
+  "version": "0.29.0",
   "description": "An SDK for communicating with the webmate SDK in Javascript / Typescript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,8 @@
     "request-promise-native": "1.0.5",
     "request": "2.88.0",
     "immutable": "^3.8.2",
-    "rxjs": "^6.5.2"
+    "rxjs": "^6.5.2",
+    "uuid": "8.3.1"
   },
   "devDependencies": {
     "del": "^3.0.0",

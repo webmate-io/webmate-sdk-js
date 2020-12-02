@@ -7,7 +7,7 @@ import {Map} from "immutable";
 import {TestMail, TestMailAddress} from "./mail-test-types";
 import {combineLatest, Observable, of} from "rxjs";
 import {map, mergeMap, tap} from "rxjs/operators";
-import {ArtifactType} from "../artifact/artifact-types";
+import {ArtifactType} from "../artifacts/artifact-types";
 
 export class MailTestClient {
 

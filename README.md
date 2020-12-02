@@ -1,9 +1,10 @@
-# webmate Javascript SDK
+# webmate JavaScript SDK
 
 The webmate SaaS test automation platform provides testing services for testers and developers of web applications.
 This SDK contains wrapper code used to call the webmate API from Java applications.
 
-There is no official version of the webmate Javascript SDK, yet. This is a preview release, which provides wrappers for the following tasks:
+The webmate Java SDK is still under development and maintained regularly.
+This release provides wrappers for the following tasks:
 
 * Perform state extraction in an existing browser session, e.g. one that has been created via Selenium.
 * Execute a new JobRun in the webmate Job service, e.g. to start a Job comparing the layout of web pages in multiple browsers.
@@ -12,7 +13,8 @@ There is no official version of the webmate Javascript SDK, yet. This is a previ
 
 This SDK pre-release gives access to a small subset of the features available in the API. The SDK will be completed over time.
 
-For a list of recent change refer to the [changelog](CHANGES.md)
+For a complete list of recent changes, please refer to the [changelog](CHANGES.md).
+
 
 ## Using the SDK in your Project
 
@@ -29,13 +31,13 @@ To use the SDK afterwards, import it into your test files as follows:
 var webmate = require("webmate-sdk-js");
 ```
 
-If you're using typescript:
+If you're using TypeScript:
 
 ```ts
 import * as Webmate from "webmate-sdk-js";
 ```
 
-In typescript, you can also import the necessary type-definitions or classes directly:
+In TypeScript, you can also import the necessary type-definitions or classes directly:
 
 ```ts
 import {
@@ -74,3 +76,7 @@ Information about how to build a ```StateExtractionConfig``` can be found at htt
 In order to use this SDK, you need to have an account at webmate SaaS or a commercial on-premise installation.
 Please contact Testfabrik (info@testfabrik.com) if you are interested in evaluating webmate.
 
+## webmate API
+
+Although, the SDK provides a number of features and convenience wrappers it doesn't exhaust the full potential of the webmate API.
+See the REST API [Swagger documentation](https://app.webmate.io/api/swagger) for a comprehensive summary of the webmate functionalities.
