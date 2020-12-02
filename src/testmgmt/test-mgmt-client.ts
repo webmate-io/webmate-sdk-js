@@ -4,16 +4,19 @@ import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
 import {ProjectId, TestResultId, TestRunId} from "../types";
 import {List, Map} from "immutable";
-import {Test, TestId, TestInfo, TestResult} from "./testmgmt-types";
 import {Observable, from as observableFrom} from "rxjs";
 import {map} from "rxjs/operators";
+import {TestInfo} from "./test-info";
+import {TestId} from "./testmgmt-types";
+import {Test} from "./test";
+import {TestResult} from "./test-result";
 
 /**
  * Facade of the webmate TestMgmt subsystem, which provides access to information about Tests, TestRuns and
  * TestResults.
  */
-export class TestmgmtClient {
-    private apiClient: TestmgmtApiClient = new TestmgmtApiClient(this.session.authInfo, this.session.environment);
+export class TestMgmtClient {
+    private apiClient: TestMgmtApiClient = new TestMgmtApiClient(this.session.authInfo, this.session.environment);
 
     /**
      * Creates a TestMgmtClient based on a WebmateApiSession
@@ -53,7 +56,7 @@ export class TestmgmtClient {
 
 }
 
-class TestmgmtApiClient extends WebmateAPIClient {
+class TestMgmtApiClient extends WebmateAPIClient {
     private getTestsInProjectTemplate = new UriTemplate("/projects/${projectId}/testmgmt/tests");
 
     private getTestTemplate = new UriTemplate("/testmgmt/tests/${testId}");
@@ -88,3 +91,9 @@ class TestmgmtApiClient extends WebmateAPIClient {
     }
 
 }
+
+// class SingleTestRunCreationSpec {
+//     private type = "SingleTestRunCreationSpec";
+//     constructor(private assignmentSpec: ) {
+//     }
+// }

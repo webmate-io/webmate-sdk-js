@@ -2,7 +2,7 @@ import {WebmateAuthInfo} from "./webmate-auth-info";
 import {WebmateEnvironment} from "./webmate-environment";
 import {JobEngine} from "./jobs/job-engine";
 import {BrowserSessionClient} from "./browsersession/browser-session-client";
-import {TestmgmtClient} from "./testmgmt/testmgmt-client";
+import {TestMgmtClient} from "./testmgmt/test-mgmt-client";
 import {DeviceClient} from "./device/device-client";
 import {ArtifactClient} from "./artifacts/artifact-client";
 import {MailTestClient} from "./mailTest/mail-test-client";
@@ -13,7 +13,7 @@ export class WebmateAPISession {
     public jobEngine: JobEngine;
     public browserSession: BrowserSessionClient;
     public device: DeviceClient;
-    public testMgmt: TestmgmtClient;
+    public testMgmt: TestMgmtClient;
     public mailTest: MailTestClient;
     public artifact: ArtifactClient;
 
@@ -27,7 +27,7 @@ export class WebmateAPISession {
     constructor(public authInfo: WebmateAuthInfo, public environment: WebmateEnvironment) {
         this.jobEngine = new JobEngine(this);
         this.browserSession = new BrowserSessionClient(this);
-        this.testMgmt = new TestmgmtClient(this);
+        this.testMgmt = new TestMgmtClient(this);
         this.device = new DeviceClient(this);
         this.artifact = new ArtifactClient(this);
         this.mailTest = new MailTestClient(this);

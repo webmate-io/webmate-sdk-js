@@ -22,7 +22,7 @@ export class FinishStoryActionAddArtifactData {
 
     public static failure(spanId: ActionSpanId, errorMsg: String, detail?) {
         let result = {
-            "success": true
+            "success": true // TODO is this correct?
         };
         return new FinishStoryActionAddArtifactData(spanId, result);
     }
