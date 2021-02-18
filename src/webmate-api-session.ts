@@ -7,15 +7,59 @@ import {DeviceClient} from "./device/device-client";
 import {ArtifactClient} from "./artifacts/artifact-client";
 import {MailTestClient} from "./mailTest/mail-test-client";
 import {BrowserSessionId} from "./types";
+import { SeleniumServiceClient } from "./selenium/selenium-service-client";
+import { PackageMgmtClient } from "./packagemgmt/packagemgmt-client";
+import { BlobClient } from "./blobs/blob-client";
 
+/**
+ * WebmateSession
+ */
 export class WebmateAPISession {
 
+    /**
+     * Facade to webmate's JobEngine subsystem.
+     */
     public jobEngine: JobEngine;
+
+    /**
+     * Facade to webmate's BrowserSession subsystem.
+     */
     public browserSession: BrowserSessionClient;
+
+    /**
+     * Facade to webmate's Device subsystem.
+     */
     public device: DeviceClient;
+
+    /**
+     * Facade to webmate's TestMgmt subsystem.
+     */
     public testMgmt: TestMgmtClient;
+
+    /**
+     * Facade to webmate's MailTest subsystem.
+     */
     public mailTest: MailTestClient;
+
+    /**
+     * Facade to webmate's Artifact subsystem.
+     */
     public artifact: ArtifactClient;
+
+    /**
+     * Facade to webmate's Selenium subsystem.
+     */
+    public selenium: SeleniumServiceClient;
+
+    /**
+     * Facade to webmate's Blob subsystem.
+     */
+    public blob: BlobClient;
+
+    /**
+     * Facade to webmate's Package Management (e.g. App) subsystem.
+     */
+    public packages: PackageMgmtClient;
 
     /**
      * Constructor to create a new WebmateAPISession.
@@ -31,6 +75,9 @@ export class WebmateAPISession {
         this.device = new DeviceClient(this);
         this.artifact = new ArtifactClient(this);
         this.mailTest = new MailTestClient(this);
+        this.selenium = new SeleniumServiceClient(this);
+        this.packages = new PackageMgmtClient(this);
+        this.blob = new BlobClient(this);
     }
 
     //////////////////////////////

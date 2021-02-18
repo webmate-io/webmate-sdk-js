@@ -10,14 +10,14 @@ export class StartStoryActionAddArtifactData {
             "name": this.name,
             "actionType": "story",
             "spanId": this.spanId
-        }
+        };
 
-        let object = {
+        let object: any = {
             "data": data,
             "artifactType": "Action.ActionStart"
         };
 
-        if (!this.associatedTestRuns?.isEmpty()) {
+        if (!!this.associatedTestRuns && !this.associatedTestRuns.isEmpty()) {
             object["associatedTestRuns"] = this.associatedTestRuns;
         }
 

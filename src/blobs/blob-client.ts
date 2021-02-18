@@ -37,7 +37,7 @@ export class BlobApiClient extends WebmateAPIClient {
         let params = Map({
             projectId: projectId
         });
-        return this.sendPOSTWithFile(this.putBlobTemplate, filePath, params, contentType)
+        return this.sendPOSTWithFile(this.putBlobTemplate, filePath, params, contentType);
     }
 
     public deleteBlob(blobId: BlobId): void {

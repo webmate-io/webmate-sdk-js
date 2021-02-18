@@ -16,18 +16,18 @@ export class PackageMgmtClient {
     }
 
     createPackage(projectId: ProjectId, blobId: BlobId, packageName: string, extension: string): Observable<Package> {
-        return this.apiClient.createPackage(projectId, blobId, packageName, extension)
+        return this.apiClient.createPackage(projectId, blobId, packageName, extension);
     }
 
     getPackage(packageId: PackageId): Observable<Package> {
-        return this.apiClient.getPackage(packageId)
+        return this.apiClient.getPackage(packageId);
     }
 
     uploadPackage(projectId: ProjectId, filePath: string, packageName: string, extension: string): Observable<Package> {
         let contentType = extension === "apk" ? "application/vnd.android.package-archive" : "application/x-ios-app";
-        let blobClient = new BlobClient(this.session)
+        let blobClient = new BlobClient(this.session);
         return blobClient.putBlob(projectId, filePath, contentType).pipe(mergeMap(blobId => {
-            return this.createPackage(projectId, blobId, packageName, extension)
+            return this.createPackage(projectId, blobId, packageName, extension);
         }));
     }
 
@@ -39,7 +39,7 @@ class PackageMgmtApiClient extends WebmateAPIClient {
     private getPackageTemplate = new UriTemplate("/package/packages/${packageId}");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
-        super(authInfo, environment)
+        super(authInfo, environment);
     }
 
     createPackage(projectId: ProjectId, blobId: BlobId, packageName: string, extension: string): Observable<Package> {
@@ -47,19 +47,19 @@ class PackageMgmtApiClient extends WebmateAPIClient {
             "blobId": blobId,
             "name": packageName,
             "extension": extension
-        }
+        };
         let params = Map({
             "projectId": projectId
-        })
+        });
 
-        return this.sendPOST(this.createPackageTemplate, params, packageData)
+        return this.sendPOST(this.createPackageTemplate, params, packageData);
     }
 
     getPackage(packageId: PackageId): Observable<Package> {
         let params = Map({
             "packageId": packageId
-        })
-        return this.sendGET(this.getPackageTemplate, params)
+        });
+        return this.sendGET(this.getPackageTemplate, params);
     }
 
 }

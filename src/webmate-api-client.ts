@@ -54,10 +54,10 @@ export class WebmateAPIClient {
     }
 
     public sendPOSTWithFile(schema: UriTemplate, filePath: string, params: Map<string, string>, contentType?: string, urlParams?: Map<string, string>): Observable<any> {
-        let stream = fs.createReadStream(filePath)
+        let stream = fs.createReadStream(filePath);
         let options = this.prepareRequest(schema, params, stream, urlParams);
         if (contentType !== undefined) {
-            options['headers']['content-type'] = contentType
+            options['headers']['content-type'] = contentType;
         }
         return observableFrom(request.post(options).promise());
     }

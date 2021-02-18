@@ -34,7 +34,7 @@ export class MailTestClient {
      */
     public getMailsInTestRun(projectId: ProjectId, testRunId: TestRunId): Observable<Array<TestMail>> {
         return this.session.artifact.queryArtifacts(projectId, [ArtifactType.fromString("Mail.MailContent")], testRunId, undefined)
-            .pipe(mergeMap(arr => arr.length == 0 ? of([]) : combineLatest(arr.map(info => this.session.artifact.getArtifact(info.id).pipe(map(a => TestMail.fromArtifact(a)))))))
+            .pipe(mergeMap(arr => arr.length == 0 ? of([]) : combineLatest(arr.map(info => this.session.artifact.getArtifact(info.id).pipe(map(a => TestMail.fromArtifact(a)))))));
     }
 
 }

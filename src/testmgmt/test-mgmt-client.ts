@@ -2,9 +2,9 @@ import {WebmateAPISession} from "../webmate-api-session";
 import {UriTemplate, WebmateAPIClient} from "../webmate-api-client";
 import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
-import {ProjectId, TestResultId, TestRunId} from "../types";
+import {ProjectId, TestRunId} from "../types";
 import {List, Map} from "immutable";
-import {Observable, from as observableFrom} from "rxjs";
+import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
 import {TestInfo} from "./test-info";
 import {TestId} from "./testmgmt-types";
@@ -91,9 +91,3 @@ class TestMgmtApiClient extends WebmateAPIClient {
     }
 
 }
-
-// class SingleTestRunCreationSpec {
-//     private type = "SingleTestRunCreationSpec";
-//     constructor(private assignmentSpec: ) {
-//     }
-// }

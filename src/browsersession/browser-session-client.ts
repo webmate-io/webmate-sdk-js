@@ -9,7 +9,7 @@ import {defer, Observable} from "rxjs";
 import {BrowserSessionScreenshotExtractionConfig} from "./browser-session-screenshot-extraction-config";
 import {FinishStoryActionAddArtifactData} from "./finish-story-action-add-artifact-data";
 import { v4 as uuid } from 'uuid';
-import {StartStoryActionAddArtifactData} from "./StartStoryActionAddArtifactData";
+import {StartStoryActionAddArtifactData} from "./start-story-action-add-artifact-data";
 
 const sleep = require('util').promisify(setTimeout);
 
@@ -83,7 +83,7 @@ export class BrowserSessionClient {
     }
 
     // TODO return type void?
-    public finishAction(successMessage: String): void {
+    public finishAction(successMessage: string): void {
         let expeditionId = this.session.getOnlyAssociatedExpedition();
         if (this.currentSpanIdsStack.length <= 0) {
             throw new Error("Trying to finish action but none is active.");
@@ -152,9 +152,9 @@ class BrowserSessionApiClient extends WebmateAPIClient{
     public startAction(expeditionId: BrowserSessionId, art: StartStoryActionAddArtifactData): Observable<void> {
         let params = Map({
             "expeditionId": expeditionId
-        })
+        });
         let body = art;
-        return this.sendPOST(this.addArtifactTemplate, params, body)
+        return this.sendPOST(this.addArtifactTemplate, params, body);
     }
 
     public finishAction(expeditionId: BrowserSessionId, art: FinishStoryActionAddArtifactData): Observable<void> {

@@ -1,5 +1,24 @@
+import {Platform} from "./platform";
 
 export class Browser {
 
-    constructor(public browserType: string, public version: string, public platform: string, public properties: any = null){}
+    public readonly platform: Platform;
+
+    constructor(public readonly browserType: string,
+                public readonly version: string,
+                platform?: Platform,
+                platformStr?: string,
+                public properties: any = null) {
+        // Set platform
+        if (!!platform) {
+            this.platform = platform;
+        } else {
+            if (!!platformStr) {
+                this.platform = Platform.fromString(platformStr);
+            } else {
+                throw new Error(`No valid platform or platformStr was passed.`);
+            }
+        }
+
+    }
 }
