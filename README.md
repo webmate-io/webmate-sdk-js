@@ -1,7 +1,7 @@
-# webmate JavaScript SDK
+# webmate JavaScript and TypeScript SDK
 
 The webmate SaaS test automation platform provides testing services for testers and developers of web applications.
-This SDK contains wrapper code used to call the webmate API from Java applications.
+This SDK contains wrapper code used to call the webmate API from JavaScript and TypeScript applications.
 
 The webmate JavaScript SDK is still under development and maintained regularly.
 This release provides wrappers for the following tasks:
@@ -19,7 +19,7 @@ For a complete list of recent changes, please refer to the [changelog](CHANGES.m
 ## Using the SDK in your Project
 
 This release is also distributed via npm under the package name webmate-sdk-js.
-To use the SDK we recommed to install it via npm:
+To use the SDK we recommend to install it via npm:
 
 ```bash
 $ npm install webmate-sdk-js --save
@@ -50,31 +50,21 @@ import {
 ```
 
 
+## Sample Code
+
+See the following sample projects:
+* [Java Samples](https://github.com/webmate-io/webmate-sdk-samples)
+* [JavaScript And TypeScript Samples](https://github.com/webmate-io/webmate-sdk-js-samples)
+
+In order to use these samples, you need to have an account at webmate SaaS or a commercial on-premise installation.
+Please contact Testfabrik (info@testfabrik.com) if you are interested in evaluating webmate.
+
+
 ## Usage
-
-With this SDK, you can automate Selenium testing, as well as CrossBrowser and Regression testing via webmate.
-Use 
-```js
-var webmateSession = Webmate.startSession(MY_WEBMATE_USER, MY_WEBMATE_APIKEY, WEBMATE_API_URL);
-```
-to connect to the webmate API.
-
-During tests, you can create states using
-Use 
-```js
-webmateSession.browserSession.createState(sessionId, state_name, [timeout], [STATE_EXTRACTION_CONFIG])
-```
-
-After executing the tests, you can create a CrossBrowser or Regression job based on your selenium sessions like this:
-```js
-webmateSession.jobEngine.startKnownJob(test_name, new webmate.CrossbrowserJobInput(firstSession, sessionIds), MY_WEBMATE_PROJECTID)
-```
-
-Information about how to build a ```StateExtractionConfig``` can be found at https://github.com/webmate-io/webmate-sdk-java/wiki/BrowserSessionStateExtractionConfig
-
 
 In order to use this SDK, you need to have an account at webmate SaaS or a commercial on-premise installation.
 Please contact Testfabrik (info@testfabrik.com) if you are interested in evaluating webmate.
+
 
 ## webmate API
 

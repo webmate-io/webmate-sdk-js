@@ -7,19 +7,23 @@ import {Observable} from "rxjs";
 import {Map} from "immutable";
 import {DeviceRequest} from "./device-request";
 
-
+/**
+ * Facade to webmate's Device subsystem.
+ */
 export class DeviceClient {
 
     private apiClient: DeviceApiClient = new DeviceApiClient(this.session.authInfo, this.session.environment);
 
     /**
      * Creates a DeviceClient based on a WebmateApiSession.
+     *
      * @param session The WebmateApiSession the DeviceClient is supposed to be based on.
      */
     constructor(private session: WebmateAPISession) {}
 
     /**
      * Get all Device ids for a project.
+     *
      * @param projectId Id of Project (as found in dashboard), for which devices should be retrieved.
      * @return Collection of device ids.
      */
@@ -69,13 +73,9 @@ export class DeviceClient {
 export class DeviceApiClient extends WebmateAPIClient {
 
     private getDeviceIdsForProjectRoute = new UriTemplate("/projects/${projectId}/device/devices");
-
     private requestDeviceByRequirementsForProjectRoute = new UriTemplate("/projects/${projectId}/device/devices");
-
     private synchronizeDeviceRoute = new UriTemplate("/device/devices/${deviceId}/sync");
-
     private releaseDeviceRoute = new UriTemplate("/device/devices/${deviceId}");
-
     private redeployDeviceRoute = new UriTemplate("/device/devices/${deviceId}/redeploy");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {

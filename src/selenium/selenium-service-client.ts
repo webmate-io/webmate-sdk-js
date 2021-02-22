@@ -9,6 +9,9 @@ import {List, Map} from "immutable";
 import {Observable} from "rxjs";
 import {first, map} from "rxjs/operators";
 
+/**
+ * Facade to webmate's Selenium subsystem.
+ */
 export class SeleniumServiceClient {
 
     private apiClient: SeleniumServiceApiClient = new SeleniumServiceApiClient(this.session.authInfo, this.session.environment);
@@ -131,11 +134,11 @@ class SeleniumServiceApiClient extends WebmateAPIClient {
     }
 
     getSeleniumsessionForBrowserSession(browserSessionId: BrowserSessionId): Observable<SeleniumSession> {
-        let queryparams: any = {
+        let queryparams = Map({
             'expeditionId': browserSessionId
-        };
+        });
 
-        return this.sendGET(this.getSeleniumsessionForBrowserSessionTemplate, Map({}), Map(queryparams))
+        return this.sendGET(this.getSeleniumsessionForBrowserSessionTemplate, Map({}), queryparams)
             .pipe(first(), map(resp => this.buildSeleniumSessionFromJson(resp)));
     }
 
@@ -144,7 +147,7 @@ class SeleniumServiceApiClient extends WebmateAPIClient {
             'projectId': projectId
         });
         return this.sendGET(this.getSeleniumCapabilitiesForProjectTemplate, params).pipe(map(capabilitiesJson => {
-            return capabilitiesJson.map(capability => this.buildSeleniumCapabilityFromJson(capability));
+            return capabilitiesJson.map((capability: any) => this.buildSeleniumCapabilityFromJson(capability));
         }));
     }
 
@@ -163,8 +166,8 @@ class SeleniumServiceApiClient extends WebmateAPIClient {
         let params = Map({
            'projectId': projectId
         });
-        return this.sendGET(this.getSeleniumsessionsForProjectTemplate, params, queryparams).pipe(map(sessionsJson => {
-            return sessionsJson.map(session => this.buildSeleniumSessionFromJson(session));
+        return this.sendGET(this.getSeleniumsessionsForProjectTemplate, params, Map(queryparams)).pipe(map(sessionsJson => {
+            return sessionsJson.map((session: any) => this.buildSeleniumSessionFromJson(session));
         }));
     }
 
@@ -183,8 +186,8 @@ class SeleniumServiceApiClient extends WebmateAPIClient {
         let params = Map({
             'projectId': projectId
         });
-        return this.sendGET(this.getSeleniumsessionIdsForProjectTemplate, params, queryparams).pipe(map(sessionsJson => {
-            return sessionsJson.map(session => this.buildSeleniumSessionFromJson(session));
+        return this.sendGET(this.getSeleniumsessionIdsForProjectTemplate, params, Map(queryparams)).pipe(map(sessionsJson => {
+            return sessionsJson.map((session: any) => this.buildSeleniumSessionFromJson(session));
         }));
     }
 

@@ -1,12 +1,11 @@
 import {SeleniumSessionProxy} from "./selenium-session-proxy";
 import {SeleniumSession} from "./selenium-session";
-import { BrowserSessionId, ProjectId, TestRunId, UserId, WebmateSeleniumSessionId } from "../types";
+import {BrowserSessionId, ProjectId, TestRunId, UserId, WebmateSeleniumSessionId} from "../types";
 import {WebmateAPISession} from "../webmate-api-session";
-import { Observable, of } from "rxjs";
-import { first, flatMap, map, take } from "rxjs/operators";
-import { Browser } from "../browser";
-import { TestRun } from "../testmgmt/test-run";
-import { TestRunEvaluationStatus } from "../testmgmt/test-run-evaluation-status";
+import {Observable, of} from "rxjs";
+import {first, flatMap, map} from "rxjs/operators";
+import {Browser} from "../browser";
+import {TestRun} from "../testmgmt/test-run";
 
 class FromBrowserSessionProxy implements SeleniumSessionProxy {
 

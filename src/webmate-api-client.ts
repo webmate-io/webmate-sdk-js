@@ -6,8 +6,9 @@ import {Map} from "immutable";
 import {Observable, from as observableFrom} from "rxjs";
 import * as fs from "fs";
 
-
-
+/**
+ * API client for interacting with the webmate API.
+ */
 export class WebmateAPIClient {
 
     constructor(private authInfo: WebmateAuthInfo, private environment: WebmateEnvironment) {}
@@ -69,9 +70,12 @@ export class WebmateAPIClient {
 
 }
 
+/**
+ * Template for API URI, e.g. "/browsersessions/${browserSessionId}"
+ */
 export class UriTemplate {
 
-    constructor(public schema: string) {}
+    constructor(public readonly schema: string, public readonly name?: string) {}
 
     replaceParamsInTemplate(template: string, params: Map<string, string>): string {
         let paramPrologue = "${";

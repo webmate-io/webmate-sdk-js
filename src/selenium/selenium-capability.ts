@@ -1,4 +1,4 @@
-import { BrowserType } from "../browser-type";
+import {BrowserType} from "../browser-type";
 
 export class SeleniumCapability {
 

@@ -17,8 +17,8 @@ describe('Platform Tests', function() {
     });
 
     it('should throw an error for invalid platform strings', function() {
-        let invalidStr = 'WINDOWS';
-        expect(() => Platform.fromString(invalidStr)).to.throw();
+        expect(() => Platform.fromString('WINDOWS')).to.throw();
+        expect(() => Platform.fromString('WINDOWS10')).to.throw();
     });
 
     it('should correctly transform platform objects to strings', function() {

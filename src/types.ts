@@ -25,6 +25,11 @@ export type WebmateSeleniumSessionId = string
 export type TestResultId = string;
 export type TestResultType = string;
 export type TestRunId = string;
+export type TestId = string;
+export type TestTemplateId = string;
+export type TestExecutionId = string;
+export type TestSessionId = string;
+export type ApplicationModelId = string;
 
 // other
 export type ArtifactId = string;

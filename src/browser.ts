@@ -8,7 +8,7 @@ export class Browser {
                 public readonly version: string,
                 platform?: Platform,
                 platformStr?: string,
-                public properties: any = null) {
+                public properties?: any) {
         // Set platform
         if (!!platform) {
             this.platform = platform;

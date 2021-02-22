@@ -1,5 +1,5 @@
 import {DateTime} from "../types";
-import {TestId} from "./testmgmt-types";
+import {TestId} from "../types";
 
 export interface TestInfo {
     id: TestId,

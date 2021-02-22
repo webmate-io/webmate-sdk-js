@@ -4,11 +4,11 @@ import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
 import {BrowserSessionId, BrowserSessionStateId} from "../types";
 import {BrowserSessionStateExtractionConfig} from "./browser-session-state-extraction-config";
-import {Map, Stack} from 'immutable';
-import {defer, Observable} from "rxjs";
+import {Map} from 'immutable';
+import {Observable} from "rxjs";
 import {BrowserSessionScreenshotExtractionConfig} from "./browser-session-screenshot-extraction-config";
 import {FinishStoryActionAddArtifactData} from "./finish-story-action-add-artifact-data";
-import { v4 as uuid } from 'uuid';
+import {v4 as uuid} from 'uuid';
 import {StartStoryActionAddArtifactData} from "./start-story-action-add-artifact-data";
 
 const sleep = require('util').promisify(setTimeout);
@@ -25,13 +25,17 @@ const DefaultStateExtractionConfig = new BrowserSessionStateExtractionConfig(
 
 const DefaultBrowserSessionTimeoutMillis = 5 * 60 * 1000; // Default timeout: 5 minutes
 
+/**
+ * Facade to webmate's BrowserSession subsystem.
+ */
 export class BrowserSessionClient {
     private apiClient: BrowserSessionApiClient = new BrowserSessionApiClient(this.session.authInfo, this.session.environment);
 
     private currentSpanIdsStack = new Array<string>();
 
     /**
-     * Creates a BrowserSessionClient based on a WebmateApiSession
+     * Creates a BrowserSessionClient based on a WebmateApiSession.
+     *
      * @param session The WebmateApiSession the BrowserSessionClient is supposed to be based on
      */
     constructor(private session: WebmateAPISession) {
@@ -39,6 +43,7 @@ export class BrowserSessionClient {
 
     /**
      * Create a new State for the given BrowserSession.
+     *
      * @param browserSessionId BrowserSession, in which the state should be extracted.
      * @param stateName Label for state (should be unique for BrowserSession, otherwise some tests could get confused).
      * @param timeout Maximal amount of time to wait for the state extraction to complete in milliseconds. Defaults to 300000ms(5 min.)
@@ -103,7 +108,7 @@ export class BrowserSessionClient {
     }
 
     /**
-     * Terminate the given BrowserSession
+     * Terminate the given BrowserSession.
      *
      * @param browserSessionId The Id for the BrowserSession that is supposed to be terminated
      * @return true if the Browsersession was successfully terminated
@@ -115,6 +120,7 @@ export class BrowserSessionClient {
 }
 
 class BrowserSessionApiClient extends WebmateAPIClient{
+
     createStateTemplate: UriTemplate = new UriTemplate("/browsersession/${browserSessionId}/states");
     checkStateProgressTemplate: UriTemplate = new UriTemplate("/browsersession/${browserSessionId}/artifacts/${browserSessionArtifactId}/progress");
     addArtifactTemplate: UriTemplate = new UriTemplate("/browsersession/${expeditionId}/artifacts");

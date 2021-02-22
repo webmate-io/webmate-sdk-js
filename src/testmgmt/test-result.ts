@@ -1,7 +1,7 @@
 import {BrowserSessionArtifactId, TestResultId, TestResultType, TestRunId} from "../types";
 import {List} from "immutable";
 import {Tag} from "../tag";
-import {TestId} from "./testmgmt-types";
+import {TestId} from "../types";
 
 /**
  * Result of a Test, e.g. a defect that has been found.

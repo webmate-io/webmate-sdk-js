@@ -1,4 +1,4 @@
-import {TestId} from "./testmgmt-types";
+import {TestId} from "../types";
 
 /**
  * Identifies TestRun in a Test.

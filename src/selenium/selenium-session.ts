@@ -1,5 +1,5 @@
-import { BrowserSessionId, ProjectId, UserId, WebmateSeleniumSessionId } from "../types";
-import { Browser } from "../browser";
+import {BrowserSessionId, ProjectId, UserId, WebmateSeleniumSessionId} from "../types";
+import {Browser} from "../browser";
 
 /**
  * Representation of a Selenium session in webmate.

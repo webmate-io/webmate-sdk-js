@@ -6,7 +6,9 @@ import {BlobId, ProjectId} from "../types";
 import {Observable} from "rxjs";
 import {Map} from "immutable";
 
-
+/**
+ * Facade to webmate's Blob subsystem.
+ */
 export class BlobClient {
 
     private apiClient = new BlobApiClient(this.session.authInfo, this.session.environment);
@@ -26,7 +28,6 @@ export class BlobClient {
 export class BlobApiClient extends WebmateAPIClient {
 
     private putBlobTemplate = new UriTemplate("/projects/${projectId}/blobs");
-
     private deleteBlobTemplate = new UriTemplate("/blobs/${blobId}");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {

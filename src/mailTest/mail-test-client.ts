@@ -9,6 +9,9 @@ import {combineLatest, Observable, of} from "rxjs";
 import {map, mergeMap, tap} from "rxjs/operators";
 import {ArtifactType} from "../artifacts/artifact-types";
 
+/**
+ * Facade to webmate's MailTest subsystem.
+ */
 export class MailTestClient {
 
     private apiClient: MailTestApiClient = new MailTestApiClient(this.session.authInfo, this.session.environment);
@@ -18,6 +21,7 @@ export class MailTestClient {
 
     /**
      * Create a TestMail that can be used in a TestRun.
+     *
      * @param projectId Id of Project.
      * @param testRunId Id of TestRun.
      * @return email address associated with project and testrun.
@@ -27,7 +31,8 @@ export class MailTestClient {
     }
 
     /**
-     * Get emails for the test mail adress in the given TestRun and project
+     * Get emails for the test mail address in the given TestRun and project.
+     *
      * @param projectId Project id.
      * @param testRunId Id of TestRun.
      * @return list of TestMails

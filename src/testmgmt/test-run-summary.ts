@@ -1,5 +1,4 @@
-import {DateTime, ProjectId, UserId} from "../types";
-import {TestId} from "./testmgmt-types";
+import {DateTime, ProjectId, TestId, UserId} from "../types";
 import {TestRunInfo} from "./test-run-info";
 
 /**

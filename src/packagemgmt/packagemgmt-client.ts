@@ -9,11 +9,19 @@ import {mergeMap} from "rxjs/operators";
 import {WebmateAPISession} from "../webmate-api-session";
 import {BlobClient} from "../blobs/blob-client";
 
+/**
+ * Facade to webmate's Package Management (e.g. App) subsystem.
+ */
 export class PackageMgmtClient {
+
     private apiClient: PackageMgmtApiClient = new PackageMgmtApiClient(this.session.authInfo, this.session.environment);
 
-    constructor(private session: WebmateAPISession) {
-    }
+    /**
+     * Creates an PackageMgmtClient based on a WebmateApiSession.
+     *
+     * @param session The WebmateApiSession used by the PackageMgmtClient
+     */
+    constructor(private session: WebmateAPISession) {}
 
     createPackage(projectId: ProjectId, blobId: BlobId, packageName: string, extension: string): Observable<Package> {
         return this.apiClient.createPackage(projectId, blobId, packageName, extension);
@@ -34,8 +42,8 @@ export class PackageMgmtClient {
 }
 
 class PackageMgmtApiClient extends WebmateAPIClient {
-    private createPackageTemplate = new UriTemplate("/projects/${projectId}/packages");
 
+    private createPackageTemplate = new UriTemplate("/projects/${projectId}/packages");
     private getPackageTemplate = new UriTemplate("/package/packages/${packageId}");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
