@@ -7,6 +7,6 @@ export class WMDataType {
     public static readonly BrowserSpecification = new WMDataType("BrowserSpecification");
     public static readonly URLListDriverSpecification = new WMDataType("URLListDriverSpecification");
 
-    constructor(private tpe: string) {}
+    constructor(public readonly tpe: string) {}
 
 }

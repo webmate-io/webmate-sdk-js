@@ -6,6 +6,7 @@ import {DeviceId, ProjectId} from "../types";
 import {Observable} from "rxjs";
 import {Map} from "immutable";
 import {DeviceRequest} from "./device-request";
+import {DeviceDTO} from "./device-dto";
 
 /**
  * Facade to webmate's Device subsystem.
@@ -37,8 +38,8 @@ export class DeviceClient {
      * @param projectId Id of Project (as found in dashboard), for which devices should be retrieved.
      * @param deviceRequest Contains the defined device properties.
      */
-    public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest) {
-        return this. apiClient.requestDeviceByRequirements(projectId, deviceRequest);
+    public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest): Observable<DeviceDTO> {
+        return this.apiClient.requestDeviceByRequirements(projectId, deviceRequest);
     }
 
     /**
@@ -46,17 +47,8 @@ export class DeviceClient {
      *
      * @param deviceId DeviceId of device. Can be found in "Details" dialog of an item in webmate device overview.
      */
-    public synchronizeDevice(deviceId: DeviceId) {
+    public synchronizeDevice(deviceId: DeviceId): Observable<void> {
         return this.apiClient.synchronizeDevice(deviceId);
-    }
-
-    /**
-     * Redeploy device. The device will be released and redeployed with the same properties as before.
-     *
-     * @param deviceId DeviceId of device. Can be found in "Details" dialog of an item in webmate device overview.
-     */
-    public redeployDevice(deviceId: DeviceId) {
-        return this.apiClient.redeployDevice(deviceId);
     }
 
     /**
@@ -64,8 +56,17 @@ export class DeviceClient {
      *
      * @param deviceId DeviceId of device. Can be found in "Details" dialog of an item in webmate device overview.
      */
-    public releaseDevice(deviceId: DeviceId) {
+    public releaseDevice(deviceId: DeviceId): Observable<void> {
         return this.apiClient.releaseDevice(deviceId);
+    }
+
+    /**
+     * Redeploy device. The device will be released and redeployed with the same properties as before.
+     *
+     * @param deviceId DeviceId of device. Can be found in "Details" dialog of an item in webmate device overview.
+     */
+    public redeployDevice(deviceId: DeviceId): Observable<void> {
+        return this.apiClient.redeployDevice(deviceId);
     }
 
 }
@@ -86,20 +87,22 @@ export class DeviceApiClient extends WebmateAPIClient {
         return this.sendGET(this.getDeviceIdsForProjectRoute, Map({"projectId": projectId}));
     }
 
-    public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest) {
+    public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest): Observable<DeviceDTO> {
         return this.sendPOST(this.requestDeviceByRequirementsForProjectRoute, Map({"projectId": projectId}), deviceRequest);
     }
 
-    public synchronizeDevice(deviceId: DeviceId) {
+    public synchronizeDevice(deviceId: DeviceId): Observable<void> {
         return this.sendPOST(this.synchronizeDeviceRoute, Map({"deviceId": deviceId}));
     }
 
-    public redeployDevice(deviceId: DeviceId) {
+    public releaseDevice(deviceId: DeviceId): Observable<void> {
+        return this.sendDELETE(this.releaseDeviceRoute, Map({"deviceId": deviceId}));
+    }
+
+    public redeployDevice(deviceId: DeviceId): Observable<void> {
         return this.sendPOST(this.redeployDeviceRoute, Map({"deviceId": deviceId}));
     }
 
-    public releaseDevice(deviceId: DeviceId) {
-        return this.sendDELETE(this.releaseDeviceRoute, Map({"deviceId": deviceId}));
-    }
+    // TODO missing methods
 
 }

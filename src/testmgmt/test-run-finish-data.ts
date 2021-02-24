@@ -11,7 +11,7 @@ export class TestRunFinishData {
    asJson(): any {
       let result: any = {
          'status': this.status
-      }
+      };
       if (!!this.message) {
          result['message'] = this.message;
       }

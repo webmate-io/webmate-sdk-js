@@ -1,16 +1,18 @@
 import {WMDataType} from "./wm-data-type";
+import {JsonSerializable} from "../json-serializable";
 
 /**
  * Input or output value of JobEngine
  */
-export class WMValue {
+export class WMValue implements JsonSerializable {
 
-    public type: WMDataType;
-    public data: any;
+    constructor(public readonly dataType: WMDataType, public readonly value: JsonSerializable) {}
 
-    constructor(dataType: WMDataType, value: any) {
-        this.type = dataType;
-        this.data = value;
+    asJson(): any {
+        return {
+            'type': this.dataType.tpe,
+            'data': this.value.asJson()
+        };
     }
 
 }

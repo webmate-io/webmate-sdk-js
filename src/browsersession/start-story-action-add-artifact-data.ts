@@ -1,11 +1,12 @@
 import {List} from "immutable";
 import {ActionSpanId, TestRunId} from "../types";
+import {JsonSerializable} from "../json-serializable";
 
-export class StartStoryActionAddArtifactData {
+export class StartStoryActionAddArtifactData implements JsonSerializable {
     constructor(private name: string, private spanId: ActionSpanId, private associatedTestRuns?: List<TestRunId>) {
     }
 
-    public toJson() {
+    asJson() {
         let data = {
             "name": this.name,
             "actionType": "story",

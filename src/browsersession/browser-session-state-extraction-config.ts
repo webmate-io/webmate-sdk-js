@@ -5,12 +5,12 @@ import {Dimension} from "../commonutils/Dimension";
 
 export class BrowserSessionStateExtractionConfig {
     public constructor(public stateId?: BrowserSessionStateId,
-                       public extractionDelay: number = 10000,
-                       public extractionCooldown: number = 2000,
+                       public extractionDelay?: number,
+                       public extractionCooldown?: number,
                        public optViewportDimension?: Dimension,
-                       public maxAdditionalWaitingTimeForStateExtraction: number = 120000,
-                       public extractDomStateData: boolean = true,
-                       public screenShotConfig: BrowserSessionScreenshotExtractionConfig = new BrowserSessionScreenshotExtractionConfig(),
-                       public warmUpConfig: BrowserSessionWarmUpConfig = new BrowserSessionWarmUpConfig()) {
+                       public maxAdditionWaitingTimeForStateExtraction?: number,
+                       public extractDomStateData?: boolean,
+                       public screenShotConfig?: BrowserSessionScreenshotExtractionConfig,
+                       public warmUpConfig?: BrowserSessionWarmUpConfig) {
     }
 }

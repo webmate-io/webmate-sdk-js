@@ -1,7 +1,7 @@
 {
-  "name": "webmate-sdk-js-test",
+  "name": "webmate-sdk-js",
   "version": "0.29.0",
-  "description": "An SDK for communicating with the webmate SDK in Javascript / Typescript",
+  "description": "A Javascript / Typescript SDK for communicating with the webmate API",
   "homepage": "https://github.com/webmate-io/webmate-sdk-js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -6,16 +6,17 @@ import {Tag} from "../../tag";
 import {StandardTestTypes} from "../testtypes/standard-test-types";
 import {SingleTestRunCreationSpec} from "../test-mgmt-client";
 import {WMValueFactory} from "../../jobs/wm-value-factory";
-import {List, Map} from "immutable";
+import {Map} from "immutable";
+import {JsonSerializableArray} from "../../json-serializable-array";
 
 export class ExpeditionComparisonSpec extends TestExecutionSpec {
 
     private readonly referenceSpec: ExpeditionSpec;
-    private readonly compareSpecs: ExpeditionSpec[];
+    private readonly compareSpecs: JsonSerializableArray<ExpeditionSpec>;
 
     constructor(executionName: string, tags: Tag[], models: ApplicationModelId[], testSessions: TestSessionId[],
-                        referenceSpec: ExpeditionSpec, compareSpecs: ExpeditionSpec[]) {
-        super(executionName, StandardTestTypes.AdHoc.testType, "Default Expedition Comparison Test", tags, models, testSessions);
+                        referenceSpec: ExpeditionSpec, compareSpecs: JsonSerializableArray<ExpeditionSpec>) {
+        super(executionName, StandardTestTypes.ExpeditionComparison.testType, "Default Expedition Comparison Test", tags, models, testSessions);
         this.referenceSpec = referenceSpec;
         this.compareSpecs = compareSpecs;
     }
@@ -23,7 +24,7 @@ export class ExpeditionComparisonSpec extends TestExecutionSpec {
     makeTestRunCreationSpec(): SingleTestRunCreationSpec {
         return new SingleTestRunCreationSpec(Map({
             "referenceExpeditionSpec": WMValueFactory.makeExpeditionSpec(this.referenceSpec),
-            "comparisonExpeditionSpecs": WMValueFactory.makeExpeditionSpecList(List(this.compareSpecs))
+            "comparisonExpeditionSpecs": WMValueFactory.makeExpeditionSpecList(this.compareSpecs)
         }));
     }
 
@@ -35,11 +36,11 @@ export class ExpeditionComparisonSpec extends TestExecutionSpec {
 export class ExpeditionComparisonCheckBuilder extends TestExecutionSpecBuilder {
 
     private constructor(private readonly executionName: string, private readonly referenceSpec: ExpeditionSpec,
-                        private readonly compareSpecs: ExpeditionSpec[]) {
+                        private readonly compareSpecs: JsonSerializableArray<ExpeditionSpec>) {
         super();
     }
 
-    static builder(executionName: string, referenceSpec: ExpeditionSpec, compareSpec: ExpeditionSpec[]) {
+    static builder(executionName: string, referenceSpec: ExpeditionSpec, compareSpec: JsonSerializableArray<ExpeditionSpec>): ExpeditionComparisonCheckBuilder {
         return new ExpeditionComparisonCheckBuilder(executionName, referenceSpec, compareSpec);
     }
 

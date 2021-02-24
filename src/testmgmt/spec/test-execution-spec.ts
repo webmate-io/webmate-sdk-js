@@ -5,13 +5,13 @@ import {SingleTestRunCreationSpec} from "../test-mgmt-client";
 
 export abstract class TestExecutionSpec {
 
-    protected constructor(protected readonly executionName: string,
-                          protected readonly testType: TestType,
-                          protected readonly defaultTestTemplateName: string,
-                          protected readonly tags: Tag[],
-                          protected readonly models: ApplicationModelId[],
-                          protected readonly associatedTestSessions: TestSessionId[],
-                          protected testTemplateId?: TestTemplateId) {}
+    protected constructor(public readonly executionName: string,
+                          public readonly testType: TestType,
+                          public readonly defaultTestTemplateName: string,
+                          public readonly tags: Tag[],
+                          public readonly models: ApplicationModelId[],
+                          public readonly associatedTestSessions: TestSessionId[],
+                          public testTemplateId?: TestTemplateId) {}
 
     abstract makeTestRunCreationSpec(): SingleTestRunCreationSpec;
 
@@ -24,15 +24,14 @@ export abstract class TestExecutionSpec {
             testTemplateIdOrName["name"] = this.defaultTestTemplateName;
         }
 
-        // TODO check json serialization
         return {
             'executionName': this.executionName,
             'testTemplateIdOrName': testTemplateIdOrName,
             'tags': this.tags,
             'models': this.models,
             'associatedSessions': this.associatedTestSessions,
-            'testRunCreationSpec': this.makeTestRunCreationSpec()
-        }
+            'testRunCreationSpec': this.makeTestRunCreationSpec().asJson()
+        };
     }
 
 }

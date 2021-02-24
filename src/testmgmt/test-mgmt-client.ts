@@ -25,11 +25,16 @@ export class SingleTestRunCreationSpec {
     constructor(private readonly parameterAssignments: Map<string, WMValue>) {}
 
     asJson(): any {
-        // TODO check json serialization
+        let parameterAssignmentsJson: any = {};
+        this.parameterAssignments.keySeq().forEach(k => {
+            if (!!k) {
+                parameterAssignmentsJson[k] = this.parameterAssignments.get(k).asJson();
+            }
+        });
         return {
             'type': 'SingleTestRunCreationSpec',
-            'assignmentSpec': this.parameterAssignments
-        }
+            'assignmentSpec': parameterAssignmentsJson
+        };
     }
 
 }
@@ -133,7 +138,7 @@ export class TestMgmtClient {
         }
         return this.apiClient.createTestSession(this.session.projectId, name).pipe(map(testSessionId => {
             return new TestSession(testSessionId, this.session);
-        }))
+        }));
     }
 
     /**
@@ -174,13 +179,13 @@ class TestMgmtApiClient extends WebmateAPIClient {
         });
         return this.sendPOST(this.createTestExecutionTemplate, params, spec.asJson()).pipe(map(resp => {
             return this.handleCreateTestExecutionResponse(resp);
-        }))
+        }));
     }
 
     createAndStartTestExecution(projectId: ProjectId, spec: TestExecutionSpec): Observable<CreateTestExecutionResponse> {
         let params = Map({
             'projectId': projectId
-        })
+        });
         // TODO test if this works
         let queryparams = Map({
             'start': 'true'

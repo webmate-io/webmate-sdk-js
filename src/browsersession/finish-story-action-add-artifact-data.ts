@@ -1,9 +1,12 @@
 import {ActionSpanId} from "../types";
+import {JsonSerializable} from "../json-serializable";
 
-export class FinishStoryActionAddArtifactData {
+export class FinishStoryActionAddArtifactData implements JsonSerializable {
 
-    private constructor(private spanId: ActionSpanId, private result?: any, private errorMsg?: string, private errorDetails?: any) {
-    }
+    private constructor(public readonly spanId: ActionSpanId,
+                        public readonly result?: any,
+                        public readonly errorMsg?: string,
+                        public readonly errorDetails?: any) {}
 
     public static successful(spanId: ActionSpanId, message?: string): FinishStoryActionAddArtifactData {
         let result: any = {
@@ -23,7 +26,7 @@ export class FinishStoryActionAddArtifactData {
         return new FinishStoryActionAddArtifactData(spanId, result);
     }
 
-    public toJson() {
+    public asJson() {
         let data: any = {
             "spanId": this.spanId
         };

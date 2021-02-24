@@ -42,7 +42,7 @@ export class WebmateSeleniumSession {
         } else if (!!seleniumSessionId) {
             this.proxy = new FromWebmateSeleniumSessionProxy(seleniumSessionId, apiSession);
         } else {
-            throw new Error('Neither browserSessionId nor seleniumSessionId was passed.')
+            throw new Error('Neither browserSessionId nor seleniumSessionId was passed.');
         }
     }
 
@@ -150,7 +150,7 @@ export class WebmateSeleniumSession {
             flatMap(_ => {
                 return this.getSeleniumCapabilities().pipe(first(), map( capabilities => {
                     return capabilities['testRunId'];
-                }))
+                }));
             })
         );
     }

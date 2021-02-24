@@ -1,8 +1,10 @@
+import {JsonSerializable} from "../json-serializable";
+
 /**
  * Marker interface for ExpeditionSpecs.
  *
- * TODO
+ * Implementations must have 'type' as json attribute.
  */
-export interface ExpeditionSpec {
+export interface ExpeditionSpec extends JsonSerializable {
 
 }

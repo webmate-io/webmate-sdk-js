@@ -20,6 +20,6 @@ describe('Browser Tests', function() {
             browser.platform.platformType.should.eq(PlatformType.WINDOWS);
             browser.platform.platformVersion.should.eq('10');
             browser.platform.platformArchitecture!.should.eq('64');
-        })
+        });
     });
 });

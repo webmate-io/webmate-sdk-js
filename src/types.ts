@@ -9,6 +9,7 @@ export type BrowserSessionStateId = string | undefined;
 
 // devices
 export type DeviceId = string;
+export type DeviceSlotId = string;
 
 // jobs
 export type JobId = string;
