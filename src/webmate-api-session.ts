@@ -11,6 +11,7 @@ import {SeleniumServiceClient} from "./selenium/selenium-service-client";
 import {PackageMgmtClient} from "./packagemgmt/packagemgmt-client";
 import {BlobClient} from "./blobs/blob-client";
 import {Tag} from "./tag";
+import {WebmateSeleniumSession} from "./selenium/webmate-selenium-session";
 
 /**
  * WebmateSession
@@ -133,10 +134,13 @@ export class WebmateAPISession {
     /**
      * Associate Selenium session with API session.
      */
-    public addSeleniumSession(opaqueSeleniumSessionIdString: string): void {
+    public addSeleniumSession(opaqueSeleniumSessionIdString: string): WebmateSeleniumSession {
+        // TODO
         // currently the browsersession id is equivalent to the selenium session id (which is scary but comes
         // quite handy)
+        let browserSessionId = opaqueSeleniumSessionIdString;
         this.addBrowserSession(opaqueSeleniumSessionIdString);
+        return new WebmateSeleniumSession(this, browserSessionId);
     }
 
 }

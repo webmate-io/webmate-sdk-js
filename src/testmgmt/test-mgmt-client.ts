@@ -244,7 +244,7 @@ class TestMgmtApiClient extends WebmateAPIClient {
             if (!!resp) {
                 throw new Error('Could not get TestRun. Got no response');
             }
-            return resp;
+            return TestRunInfo.fromJson(resp);
         }));
     }
 
@@ -252,7 +252,7 @@ class TestMgmtApiClient extends WebmateAPIClient {
         let params = Map({
             'testRunId': id
         });
-        return this.sendPOST(this.finishTestRunTemplate, params, data).pipe(map(resp => {
+        return this.sendPOST(this.finishTestRunTemplate, params, data.asJson()).pipe(map(resp => {
             if (!!resp) {
                 throw new Error('Could not get TestRun. Got no response');
             }

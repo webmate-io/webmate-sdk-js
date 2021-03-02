@@ -10,8 +10,8 @@ import {BrowserSessionScreenshotExtractionConfig} from "./browser-session-screen
 import {FinishStoryActionAddArtifactData} from "./finish-story-action-add-artifact-data";
 import {v4 as uuid} from 'uuid';
 import {StartStoryActionAddArtifactData} from "./start-story-action-add-artifact-data";
-
-const sleep = require('util').promisify(setTimeout);
+import {tap} from "rxjs/operators";
+import {BrowserSessionRef} from "./browser-session-ref";
 
 const DefaultStateExtractionConfig = new BrowserSessionStateExtractionConfig(
     undefined,
@@ -38,74 +38,75 @@ export class BrowserSessionClient {
      *
      * @param session The WebmateApiSession the BrowserSessionClient is supposed to be based on
      */
-    constructor(private session: WebmateAPISession) {
+    constructor(private session: WebmateAPISession) {}
+
+    /**
+     * Return the webmate BrowserSessionId for a given Selenium session running in webmate.
+     *
+     * @param opaqueSeleniumSessionIdString Selenium SessionId that can be obtained by calling WebDriver.getSessionId().toString().
+     * @return BrowserSessionRef that can be used to interact with the BrowserSession
+     */
+    getBrowserSessionForSeleniumSession(opaqueSeleniumSessionIdString: string): BrowserSessionRef {
+        // TODO
+        // it seems that currently the BrowserSessionId is equal to the Selenium SessionId (which I would consider a bug)
+        return new BrowserSessionRef(opaqueSeleniumSessionIdString, this.session);
     }
 
     /**
      * Create a new State for the given BrowserSession.
      *
      * @param browserSessionId BrowserSession, in which the state should be extracted.
-     * @param stateName Label for state (should be unique for BrowserSession, otherwise some tests could get confused).
-     * @param timeout Maximal amount of time to wait for the state extraction to complete in milliseconds. Defaults to 300000ms(5 min.)
-     * @param browserSessionStateExtractionConfig configuration controlling the state extraction process. See {@link BrowserSessionStateExtractionConfig}.
-     */
-    public createState(browserSessionId: BrowserSessionId,
-                       stateName: string,
-                       timeout: number = DefaultBrowserSessionTimeoutMillis,
-                       browserSessionStateExtractionConfig: BrowserSessionStateExtractionConfig = new BrowserSessionStateExtractionConfig(undefined)): Observable<BrowserSessionStateId> {
-        return this.apiClient.createState(browserSessionId, stateName, timeout, browserSessionStateExtractionConfig);
-    }
-
-    /**
-     * Create a new State for the BrowserSession registered in webmate session (there must be only one).
-     *
      * @param matchingId Label for state (should be unique for BrowserSession, otherwise some tests could get confused).
-     * @param timeoutMillis Maximal amount of time to wait for the state extraction to complete in milliseconds.
      * @param browserSessionStateExtractionConfig configuration controlling the state extraction process. See {@link BrowserSessionStateExtractionConfig}.
-     * @throws Error if an error occurs while requesting state extraction or if the timeout is exceeded.
+     * @throws WebmateApiClientException if an error occurs while requesting state extraction or if the timeout is exceeded.
      */
-    public createStateForCurrentWebmateSession(matchingId: string,
-                                               timeoutMillis: number = DefaultBrowserSessionTimeoutMillis,
-                                               browserSessionStateExtractionConfig: BrowserSessionStateExtractionConfig = DefaultStateExtractionConfig): Observable<BrowserSessionStateId> {
-        let associatedExpeditions = this.session.getAssociatedExpeditions();
-        if (associatedExpeditions.length != 1) {
-            throw new Error("If createState is called without browsersession id, there must be only one " +
-                "BrowserSession associated with the API session (to be able to identify the correct one) " +
-                "but currently there are " + associatedExpeditions.length);
+    public createState(matchingId: string,
+                       browserSessionId?: BrowserSessionId,
+                       browserSessionStateExtractionConfig: BrowserSessionStateExtractionConfig = DefaultStateExtractionConfig): Observable<BrowserSessionStateId> {
+        if (!browserSessionId) {
+            let associatedExpeditions = this.session.getAssociatedExpeditions();
+            if (associatedExpeditions.length != 1) {
+                throw new Error("If createState is called without browsersession id, there must be only one " +
+                    "BrowserSession associated with the API session (to be able to identify the correct one) " +
+                    "but currently there are " + associatedExpeditions.length);
+            }
+
+            browserSessionId = associatedExpeditions[0];
         }
 
-        let browserSessionId = associatedExpeditions[0];
-        return this.apiClient.createState(browserSessionId, matchingId, timeoutMillis, browserSessionStateExtractionConfig);
+        return this.apiClient.createState(browserSessionId, matchingId, browserSessionStateExtractionConfig);
     }
 
-    // TODO return type void?
-    public startAction(actionName: string): void {
+    // TODO missing withAction functions
+
+    public startAction(actionName: string): Observable<void> {
         let expeditionId = this.session.getOnlyAssociatedExpedition();
         let spanId = uuid();
         let artifactData = new StartStoryActionAddArtifactData(actionName, spanId);
-        this.apiClient.startAction(expeditionId, artifactData);
-        this.currentSpanIdsStack.push(spanId);
+        return this.apiClient.startAction(expeditionId, artifactData).pipe(tap(() => {
+            this.currentSpanIdsStack.push(spanId);
+        }));
     }
 
-    // TODO return type void?
-    public finishAction(successMessage: string): void {
+    public finishAction(successMessage?: string): Observable<void> {
         let expeditionId = this.session.getOnlyAssociatedExpedition();
         if (this.currentSpanIdsStack.length <= 0) {
             throw new Error("Trying to finish action but none is active.");
         }
         let spanId = this.currentSpanIdsStack.pop() as string;
-        this.apiClient.finishAction(expeditionId, FinishStoryActionAddArtifactData.successful(spanId, successMessage));
+        return this.apiClient.finishAction(expeditionId, FinishStoryActionAddArtifactData.successful(spanId, successMessage));
     }
 
-    // TODO return type void?
-    public finishActionAsFailure(errorMessage: string): void {
+    public finishActionAsFailure(errorMessage: string): Observable<void> {
         let expeditionId = this.session.getOnlyAssociatedExpedition();
         if (this.currentSpanIdsStack.length <= 0) {
             throw new Error("Trying to finish action but none is active.");
         }
         let spanId = this.currentSpanIdsStack.pop() as string;
-        this.apiClient.finishAction(expeditionId, FinishStoryActionAddArtifactData.failure(spanId, errorMessage));
+        return this.apiClient.finishAction(expeditionId, FinishStoryActionAddArtifactData.failure(spanId, errorMessage));
     }
+
+    // TODO missing other functions
 
     /**
      * Terminate the given BrowserSession.
@@ -137,12 +138,10 @@ class BrowserSessionApiClient extends WebmateAPIClient{
      *
      * @param browserSessionId id of browser session
      * @param matchingId "Name" of state
-     * @param timeoutMillis time to wait for completion of operation (may still be successful after timeout)
      * @param browserSessionStateExtractionConfig configuration controlling the state extraction process. See {@link BrowserSessionScreenshotExtractionConfig}.
      */
     public createState(browserSessionId: BrowserSessionId,
                        matchingId: string,
-                       timeoutMillis: number,
                        browserSessionStateExtractionConfig: BrowserSessionStateExtractionConfig = DefaultStateExtractionConfig): Observable<BrowserSessionStateId> {
 
         let params = Map({
@@ -159,7 +158,7 @@ class BrowserSessionApiClient extends WebmateAPIClient{
         let params = Map({
             "expeditionId": expeditionId
         });
-        let body = art;
+        let body = art.asJson();
         return this.sendPOST(this.addArtifactTemplate, params, body);
     }
 
@@ -167,7 +166,7 @@ class BrowserSessionApiClient extends WebmateAPIClient{
         let params = Map({
             "expeditionId": expeditionId
         });
-        let body = art;
+        let body = art.asJson();
         return this.sendPOST(this.addArtifactTemplate, params, body);
     }
 

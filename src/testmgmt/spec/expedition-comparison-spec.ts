@@ -40,8 +40,8 @@ export class ExpeditionComparisonCheckBuilder extends TestExecutionSpecBuilder {
         super();
     }
 
-    static builder(executionName: string, referenceSpec: ExpeditionSpec, compareSpec: JsonSerializableArray<ExpeditionSpec>): ExpeditionComparisonCheckBuilder {
-        return new ExpeditionComparisonCheckBuilder(executionName, referenceSpec, compareSpec);
+    static builder(executionName: string, referenceSpec: ExpeditionSpec, compareSpec: Array<ExpeditionSpec>): ExpeditionComparisonCheckBuilder {
+        return new ExpeditionComparisonCheckBuilder(executionName, referenceSpec, new JsonSerializableArray(...compareSpec));
     }
 
     build(): TestExecutionSpec {

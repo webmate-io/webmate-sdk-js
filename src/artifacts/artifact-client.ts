@@ -2,7 +2,7 @@ import {WebmateAPISession} from "../webmate-api-session";
 import {UriTemplate, WebmateAPIClient} from "../webmate-api-client";
 import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
-import {ArtifactId, BrowserSessionId, DateTime, ProjectId, TestRunId} from "../types";
+import {ArtifactId, BrowserSessionId, ProjectId, TestRunId} from "../types";
 import {Observable} from "rxjs";
 import {Artifact, ArtifactInfo, ArtifactType} from "./artifact-types";
 import {Map} from "immutable";

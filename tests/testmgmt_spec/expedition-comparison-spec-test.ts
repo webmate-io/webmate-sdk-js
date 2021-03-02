@@ -7,7 +7,6 @@ import {startSession} from "../../index";
 import {ExpeditionComparisonCheckBuilder} from "../../src/testmgmt/spec/expedition-comparison-spec";
 import {TestExecutionSpec} from "../../src/testmgmt/spec/test-execution-spec";
 import {StandardTestTypes} from "../../src/testmgmt/testtypes/standard-test-types";
-import {JsonSerializableArray} from "../../src/json-serializable-array";
 should();
 
 describe('Expedition Comparison Spec Tests', function() {
@@ -81,9 +80,11 @@ describe('Expedition Comparison Spec Tests', function() {
             ExpeditionSpecFactory.makeUrlListExpeditionSpec(
                 ["http://bla"],
                 new Browser(BrowserType.CHROME, "83", undefined, "WINDOWS_10_64")),
-            new JsonSerializableArray(ExpeditionSpecFactory.makeUrlListExpeditionSpec(
+[
+                ExpeditionSpecFactory.makeUrlListExpeditionSpec(
                 ["http://bla"],
-                new Browser(BrowserType.CHROME, "83", undefined, "WINDOWS_10_64")))
+                new Browser(BrowserType.CHROME, "83", undefined, "WINDOWS_10_64"))
+            ]
         ).setApiSession(session).build();
     }
 

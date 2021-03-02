@@ -3,9 +3,10 @@ import {SeleniumSession} from "./selenium-session";
 import {BrowserSessionId, ProjectId, TestRunId, UserId, WebmateSeleniumSessionId} from "../types";
 import {WebmateAPISession} from "../webmate-api-session";
 import {Observable, of} from "rxjs";
-import {first, flatMap, map} from "rxjs/operators";
+import {first, flatMap, map, mergeMap} from "rxjs/operators";
 import {Browser} from "../browser";
 import {TestRun} from "../testmgmt/test-run";
+import {TestRunEvaluationStatus} from "../testmgmt/test-run-evaluation-status";
 
 class FromBrowserSessionProxy implements SeleniumSessionProxy {
 
@@ -168,6 +169,17 @@ export class WebmateSeleniumSession {
         }));
     }
 
-    // TODO add here the missing method
+    /**
+     * Finish TestRun associated with Selenium session.
+     *
+     * @param msg Short message explaining the result of the test run.
+     * @param detail Detailed information, e.g. stack trace.
+     */
+    finishTestRun(status: TestRunEvaluationStatus, msg?: string, detail?: string): Observable<void> {
+        return this.getTestRun().pipe(mergeMap(testRun => {
+            console.log(`TestRun: ${testRun}`);
+            return testRun!.finish(status, msg, detail);
+        }));
+    }
 
 }
