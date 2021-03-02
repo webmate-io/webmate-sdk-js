@@ -2,23 +2,27 @@ import {WebmateAPISession} from "../webmate-api-session";
 import {UriTemplate, WebmateAPIClient} from "../webmate-api-client";
 import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
-import {ArtifactId, BrowserSessionId, DateTime, ProjectId, TestRunId} from "../types";
+import {ArtifactId, BrowserSessionId, ProjectId, TestRunId} from "../types";
 import {Observable} from "rxjs";
 import {Artifact, ArtifactInfo, ArtifactType} from "./artifact-types";
 import {Map} from "immutable";
 
+/**
+ * Facade to webmate's Artifact subsystem.
+ */
 export class ArtifactClient {
 
     private apiClient = new ArtifactApiClient(this.session.authInfo, this.session.environment);
 
     /**
-     * Creates an ArtifactClient based on a WebmateApiSession
+     * Creates an ArtifactClient based on a WebmateApiSession.
+     *
      * @param session The WebmateApiSession used by the ArtifactClient
      */
     constructor(private session: WebmateAPISession) {}
 
     /**
-     * Retrieve Artifact infos associated with test run and browser session in project
+     * Retrieve Artifact infos associated with test run and browser session in project.
      *
      * @param id project id
      * @param artifactTypes Types of artifacts to retrieve. If empty, artifacts of all types are retrieved.
@@ -31,7 +35,7 @@ export class ArtifactClient {
     }
 
     /**
-     * Retrieve Artifact with id
+     * Retrieve Artifact with id.
      *
      * @param id Id of Artifact.
      * @return Artifact
@@ -44,7 +48,6 @@ export class ArtifactClient {
 export class ArtifactApiClient extends WebmateAPIClient {
 
     private queryArtifactsTemplate = new UriTemplate("/projects/${projectId}/artifacts");
-
     private getArtifactTemplate = new UriTemplate("/artifact/artifacts/${artifactId}");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {

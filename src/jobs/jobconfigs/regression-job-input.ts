@@ -23,8 +23,7 @@ export class RegressionJobInput implements WellKnownJobInput {
                 type: "String",
                 data: "tag"
             }
-        }
-
+        };
     }
 }
 

@@ -1,5 +1,4 @@
-import {DateTime, JobRunId, TestRunId, UserId} from "../types";
-import {TestId, TestRunInfo} from "../testmgmt/testmgmt-types";
+import {DateTime, JobRunId, TestRunId, UserId, TestId} from "../types";
 
 export interface JobRunSummary {
     id: JobRunId,

@@ -1,4 +1,4 @@
-import {Artifact} from "../artifact/artifact-types";
+import {Artifact} from "../artifacts/artifact-types";
 
 export type TestMailAddress = string;
 

@@ -7,8 +7,11 @@ import {Map} from "immutable";
 import {TestMail, TestMailAddress} from "./mail-test-types";
 import {combineLatest, Observable, of} from "rxjs";
 import {map, mergeMap, tap} from "rxjs/operators";
-import {ArtifactType} from "../artifact/artifact-types";
+import {ArtifactType} from "../artifacts/artifact-types";
 
+/**
+ * Facade to webmate's MailTest subsystem.
+ */
 export class MailTestClient {
 
     private apiClient: MailTestApiClient = new MailTestApiClient(this.session.authInfo, this.session.environment);
@@ -18,6 +21,7 @@ export class MailTestClient {
 
     /**
      * Create a TestMail that can be used in a TestRun.
+     *
      * @param projectId Id of Project.
      * @param testRunId Id of TestRun.
      * @return email address associated with project and testrun.
@@ -27,14 +31,15 @@ export class MailTestClient {
     }
 
     /**
-     * Get emails for the test mail adress in the given TestRun and project
+     * Get emails for the test mail address in the given TestRun and project.
+     *
      * @param projectId Project id.
      * @param testRunId Id of TestRun.
      * @return list of TestMails
      */
     public getMailsInTestRun(projectId: ProjectId, testRunId: TestRunId): Observable<Array<TestMail>> {
         return this.session.artifact.queryArtifacts(projectId, [ArtifactType.fromString("Mail.MailContent")], testRunId, undefined)
-            .pipe(mergeMap(arr => arr.length == 0 ? of([]) : combineLatest(arr.map(info => this.session.artifact.getArtifact(info.id).pipe(map(a => TestMail.fromArtifact(a)))))))
+            .pipe(mergeMap(arr => arr.length == 0 ? of([]) : combineLatest(arr.map(info => this.session.artifact.getArtifact(info.id).pipe(map(a => TestMail.fromArtifact(a)))))));
     }
 
 }
