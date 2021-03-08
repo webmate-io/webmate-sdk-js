@@ -3,7 +3,7 @@
 The webmate SaaS test automation platform provides testing services for testers and developers of web applications.
 This SDK contains wrapper code used to call the webmate API from JavaScript and TypeScript applications.
 
-The webmate JavaScript SDK is still under development and maintained regularly.
+The webmate JavaScript and TypeScript SDK is still under development and maintained regularly.
 This release provides wrappers for the following tasks:
 
 * Perform state extraction in an existing browser session, e.g. one that has been created via Selenium.
