@@ -56,7 +56,7 @@ export class TestRunInfo {
     toString(): string {
         return "TestRunInfo{" +
             "testRunId=" + this.testRunId +
-            ", name='" + name + '\'' +
+            ", name='" + this.name + '\'' +
             ", testExecutionId=" + this.testExecutionId +
             ", creator=" + this.creator +
             ", output=" + this.output +

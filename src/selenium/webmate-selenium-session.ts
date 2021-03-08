@@ -10,8 +10,7 @@ import {TestRunEvaluationStatus} from "../testmgmt/test-run-evaluation-status";
 
 class FromBrowserSessionProxy implements SeleniumSessionProxy {
 
-    constructor(private readonly sessionId: BrowserSessionId, private readonly session: WebmateAPISession) {
-    }
+    constructor(private readonly sessionId: BrowserSessionId, private readonly session: WebmateAPISession) {}
 
     getSession(): Observable<SeleniumSession> {
         return this.session.selenium.getSeleniumSessionForBrowserSession(this.sessionId);
@@ -21,8 +20,7 @@ class FromBrowserSessionProxy implements SeleniumSessionProxy {
 
 class FromWebmateSeleniumSessionProxy implements SeleniumSessionProxy {
 
-    constructor(private readonly sessionId: WebmateSeleniumSessionId, private readonly session: WebmateAPISession) {
-    }
+    constructor(private readonly sessionId: WebmateSeleniumSessionId, private readonly session: WebmateAPISession) {}
 
     getSession(): Observable<SeleniumSession> {
         return this.session.selenium.getSeleniumsession(this.sessionId);
@@ -53,7 +51,7 @@ export class WebmateSeleniumSession {
                 this.cachedValue = session;
             }));
         } else {
-            return of();
+            return of(undefined);
         }
     }
 
@@ -111,7 +109,7 @@ export class WebmateSeleniumSession {
      * Internal representation of the requested Selenium capabilities
      */
     getSeleniumCapabilities(): Observable<any> {
-        return this.fetchSessionDataWithoutForcedRefresh().pipe(first(), map(_ => {
+        return this.fetchSessionDataWithoutForcedRefresh().pipe(first(), map(s => {
             return this.cachedValue!.seleniumCapabilities;
         }));
     }
@@ -177,7 +175,6 @@ export class WebmateSeleniumSession {
      */
     finishTestRun(status: TestRunEvaluationStatus, msg?: string, detail?: string): Observable<void> {
         return this.getTestRun().pipe(mergeMap(testRun => {
-            console.log(`TestRun: ${testRun}`);
             return testRun!.finish(status, msg, detail);
         }));
     }

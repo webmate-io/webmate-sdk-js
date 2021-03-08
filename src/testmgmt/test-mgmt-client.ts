@@ -205,7 +205,7 @@ class TestMgmtApiClient extends WebmateAPIClient {
         });
 
         return this.sendPOST(this.createTestSessionTemplate, params, body).pipe(map(resp => {
-            if (!!resp) {
+            if (!resp) {
                 throw new Error('Could not create TestSession. Got no response');
             }
             return resp;
@@ -217,7 +217,7 @@ class TestMgmtApiClient extends WebmateAPIClient {
             'testExecutionId': id
         });
         return this.sendPOST(this.startTestExecutionTemplate, params).pipe(map(resp => {
-            if (!!resp) {
+            if (!resp) {
                 throw new Error('Could not start TestExecution. Got no response');
             }
             return resp;
@@ -229,7 +229,7 @@ class TestMgmtApiClient extends WebmateAPIClient {
             'testExecutionId': id
         });
         return this.sendGET(this.getTestExecutionTemplate, params).pipe(map(resp => {
-            if (!!resp) {
+            if (!resp) {
                 throw new Error('Could not get TestExecution. Got no response');
             }
             return TestExecutionSummary.fromJson(resp);
@@ -241,7 +241,7 @@ class TestMgmtApiClient extends WebmateAPIClient {
             'testRunId': id
         });
         return this.sendGET(this.getTestRunTemplate, params).pipe(map(resp => {
-            if (!!resp) {
+            if (!resp) {
                 throw new Error('Could not get TestRun. Got no response');
             }
             return TestRunInfo.fromJson(resp);
@@ -253,8 +253,8 @@ class TestMgmtApiClient extends WebmateAPIClient {
             'testRunId': id
         });
         return this.sendPOST(this.finishTestRunTemplate, params, data.asJson()).pipe(map(resp => {
-            if (!!resp) {
-                throw new Error('Could not get TestRun. Got no response');
+            if (!resp) {
+                throw new Error('Could not finish TestRun. Got no response');
             }
         }));
     }

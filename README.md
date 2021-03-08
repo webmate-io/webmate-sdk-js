@@ -1,4 +1,4 @@
-# webmate JavaScript and TypeScript SDK [![Build Status](https://www.travis-ci.com/webmate-io/webmate-sdk-js.svg?branch=master)](https://www.travis-ci.com/webmate-io/webmate-sdk-js)
+# webmate JavaScript and TypeScript SDK [![Build Status](https://www.travis-ci.com/webmate-io/webmate-sdk-js.svg?branch=master)](https://www.travis-ci.com/webmate-io/webmate-sdk-js) ![npm](https://img.shields.io/npm/v/webmate-sdk-js)
 
 The webmate SaaS test automation platform provides testing services for testers and developers of web applications.
 This SDK contains wrapper code used to call the webmate API from JavaScript and TypeScript applications.

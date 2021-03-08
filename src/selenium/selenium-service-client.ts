@@ -139,7 +139,9 @@ class SeleniumServiceApiClient extends WebmateAPIClient {
         });
 
         return this.sendGET(this.getSeleniumsessionForBrowserSessionTemplate, Map({}), queryparams)
-            .pipe(first(), map(resp => this.buildSeleniumSessionFromJson(resp)));
+            .pipe(first(), map(resp => {
+                return this.buildSeleniumSessionFromJson(resp);
+            }));
     }
 
     getSeleniumCapabilitiesForProject(projectId: ProjectId): Observable<List<SeleniumCapability>> {

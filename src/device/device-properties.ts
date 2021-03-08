@@ -1,5 +1,3 @@
-import {Map} from 'immutable';
-
 export type DevicePropertyName = string;
 export type DeviceProperties = Map<DevicePropertyName, any>;
 export type DeviceRequirements = DeviceProperties;

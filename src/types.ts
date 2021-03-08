@@ -17,6 +17,7 @@ export type JobRunId = string;
 export type JobConfigName = string;
 
 // packagemgmt
+export type ImageId = string;
 export type PackageId = string;
 
 // selenium
