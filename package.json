@@ -1,7 +1,7 @@
 {
   "name": "webmate-sdk-js",
   "version": "0.29.0",
-  "description": "A Javascript / Typescript SDK for communicating with the webmate API",
+  "description": "A Javascript and Typescript SDK for communicating with the webmate API",
   "homepage": "https://github.com/webmate-io/webmate-sdk-js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,6 +33,7 @@
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
+    "axios": "^0.21.1",
     "chai": "^4.2.0",
     "del": "^3.0.0",
     "eslint": "^7.20.0",
