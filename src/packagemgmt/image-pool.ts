@@ -20,7 +20,7 @@ export class ImagePool implements JsonSerializable {
 
     asJson(): any {
         return {
-            "imagePool": this.imageIds
+            "imagePool": Array.from(this.imageIds)
         };
     }
 

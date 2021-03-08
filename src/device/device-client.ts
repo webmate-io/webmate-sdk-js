@@ -185,7 +185,7 @@ export class DeviceApiClient extends WebmateAPIClient {
     }
 
     public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest): Observable<DeviceDTO> {
-        return this.sendPOST(this.requestDeviceByRequirementsForProjectRoute, Map({"projectId": projectId}), deviceRequest);
+        return this.sendPOST(this.requestDeviceByRequirementsForProjectRoute, Map({"projectId": projectId}), deviceRequest.asJson());
     }
 
     public synchronizeDevice(deviceId: DeviceId): Observable<void> {

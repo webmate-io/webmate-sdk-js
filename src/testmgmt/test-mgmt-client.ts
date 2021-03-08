@@ -186,7 +186,6 @@ class TestMgmtApiClient extends WebmateAPIClient {
         let params = Map({
             'projectId': projectId
         });
-        // TODO test if this works
         let queryparams = Map({
             'start': 'true'
         });

@@ -1,10 +1,11 @@
 import {WebmateAuthInfo} from "./webmate-auth-info";
 import {WebmateEnvironment} from "./webmate-environment";
-import * as request from "request-promise-native";
 import {URL} from "url";
 import {Map} from "immutable";
-import {Observable, from as observableFrom} from "rxjs";
+import {Observable, from} from "rxjs";
 import * as fs from "fs";
+import axios, {AxiosRequestConfig} from "axios";
+import {map} from "rxjs/operators";
 
 /**
  * API client for interacting with the webmate API.
@@ -13,59 +14,65 @@ export class WebmateAPIClient {
 
     constructor(private authInfo: WebmateAuthInfo, private environment: WebmateEnvironment) {}
 
-    private prepareRequest(schema: UriTemplate, params: Map<string, string>, body?: Object, urlParams?: Map<string, string>) {
-        let options: any = {
-            uri: schema.buildUri(this.environment.baseUri, params),
+    private getRequestConfig(urlParams?: Map<string, string>, contentType?: string): AxiosRequestConfig {
+        let config: AxiosRequestConfig = {
             headers: {
                 'User-Agent': 'webmate-js-sdk',
                 'webmate.user': this.authInfo.emailAddress,
                 'webmate.api-token': this.authInfo.apiKey,
                 'content-type': 'application/json',
-                'accept': ''
-            },
-            json: true // Automatically parses the JSON string in the response
+            }
         };
 
-
-        if (urlParams !== undefined) {
-            options['qs'] = {};
-
+        if (!!urlParams) {
+            config['params'] = {};
             urlParams.forEach((value, key) => {
-                options.qs[key || ""] = value;
+                config.params[key || ""] = value;
             });
+
         }
 
-        if (body !== undefined) {
-            options['body'] = body;
+        if (!!contentType) {
+            config['headers']['content-type'] = contentType;
         }
 
-        return options;
+        return config;
     }
 
-
-
     public sendGET(schema: UriTemplate, params: Map<string, string>, urlParams?: Map<string, string>): Observable<any> {
-        let options = this.prepareRequest(schema, params, undefined, urlParams);
-        return observableFrom(request.get(options).promise());
+        let config = this.getRequestConfig(urlParams);
+
+        return from(axios.get(schema.buildUri(this.environment.baseUri, params), config)).pipe(
+            map((response: any) => {
+                return response.data
+            })
+        );
     }
 
     public sendPOST(schema: UriTemplate, params: Map<string, string>, body?: Object, urlParams?: Map<string, string>): Observable<any> {
-        let options = this.prepareRequest(schema, params, body, urlParams);
-        return observableFrom(request.post(options).promise());
+        let config = this.getRequestConfig(urlParams);
+
+        return from(axios.post(schema.buildUri(this.environment.baseUri, params), body, config)).pipe(
+            map((response: any) => {
+                return response.data
+            })
+        );
     }
 
     public sendPOSTWithFile(schema: UriTemplate, filePath: string, params: Map<string, string>, contentType?: string, urlParams?: Map<string, string>): Observable<any> {
-        let stream = fs.createReadStream(filePath);
-        let options = this.prepareRequest(schema, params, stream, urlParams);
-        if (contentType !== undefined) {
-            options['headers']['content-type'] = contentType;
-        }
-        return observableFrom(request.post(options).promise());
+        let readmeStream = fs.createReadStream(filePath);
+        let config = this.getRequestConfig(urlParams, contentType);
+
+        return from(axios.post(schema.buildUri(this.environment.baseUri, params), readmeStream, config)).pipe(
+            map((response: any) => {
+                return response.data
+            })
+        );
     }
 
     public sendDELETE(schema: UriTemplate, params: Map<string, string>): Observable<any> {
-        let options = this.prepareRequest(schema, params);
-        return observableFrom(request.delete(options).promise());
+        let config = this.getRequestConfig();
+        return from(axios.delete(schema.buildUri(this.environment.baseUri, params), config));
     }
 
 }
