@@ -11,8 +11,6 @@ This release provides wrappers for the following tasks:
 * There is a convenience builder for a BrowserSessionCrossbrowserAnalysis job that may be used to compare the layout of states / web pages from multiple Selenium sessions.
 * There is a convenience builder for a BrowserSessionRegressionAnalysis job that may be used to compare the layout of states / web pages from multiple Selenium sessions.
 
-This SDK pre-release gives access to a small subset of the features available in the API. The SDK will be completed over time.
-
 For a complete list of recent changes, please refer to the [changelog](CHANGES.md).
 
 

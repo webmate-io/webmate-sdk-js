@@ -91,17 +91,24 @@ export class TestMgmtClient {
     }
 
     /**
-     * Get Id of TestRun associated with a Selenium session.
+     * Set the name for a given test run.
      *
-     * @param opaqueSeleniumSessionIdString selenium session id
-     * @return test run id
+     * @param testRunId Id of TestRun.
+     * @param name New TestRun name.
      */
-    getTestRunIdForSessionId(opaqueSeleniumSessionIdString: string): Observable<TestRunId> {
-        // TODO
-        // TODO
-        // TODO
-        return of(opaqueSeleniumSessionIdString);
+    setTestRunName(testRunId: TestRunId, name: string): Observable<void> {
+        return this.apiClient.setTestRunName(testRunId, name);
     }
+
+    // /**
+    //  * Get Id of TestRun associated with a Selenium session.
+    //  *
+    //  * @param opaqueSeleniumSessionIdString selenium session id
+    //  * @return test run id
+    //  */
+    // getTestRunIdForSessionId(opaqueSeleniumSessionIdString: string): Observable<TestRunId> {
+    //     return of(opaqueSeleniumSessionIdString);
+    // }
 
     startExecution(spec: TestExecutionSpec, projectId: ProjectId): Observable<CreateTestExecutionResponse> {
         return this.apiClient.createAndStartTestExecution(projectId, spec);
@@ -161,6 +168,7 @@ class TestMgmtApiClient extends WebmateAPIClient {
     private getTestExecutionTemplate = new UriTemplate( "/testmgmt/testexecutions/${testExecutionId}", "GetTestExecution");
     private finishTestRunTemplate = new UriTemplate( "/testmgmt/testruns/${testRunId}/finish", "FinishTestRun");
     private getTestRunTemplate = new UriTemplate( "/testmgmt/testruns/${testRunId}", "GetTestRun");
+    private setTestRunNameTemplate = new UriTemplate("/testmgmt/testruns/${testRunId}/name", "SetTestRunName");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
         super(authInfo, environment);
@@ -244,6 +252,20 @@ class TestMgmtApiClient extends WebmateAPIClient {
                 throw new Error('Could not get TestRun. Got no response');
             }
             return TestRunInfo.fromJson(resp);
+        }));
+    }
+
+    setTestRunName(id: TestRunId, name: string): Observable<void> {
+        let params = Map({
+            'testRunId': id
+        });
+        let body = {
+            'name': name
+        };
+        return this.sendPOST(this.setTestRunNameTemplate, params, body).pipe(map(resp => {
+            if (!resp) {
+                throw new Error('Could not set test run name. Got no response');
+            }
         }));
     }
 
