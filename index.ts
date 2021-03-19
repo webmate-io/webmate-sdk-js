@@ -56,6 +56,7 @@ export * from './src/jobs/wm-value-factory';
 export * from './src/mailTest/mail-test-client';
 export * from './src/mailTest/mail-test-types';
 // packagemgmt
+export * from './src/packagemgmt/image-type';
 export * from './src/packagemgmt/package';
 export * from './src/packagemgmt/packagemgmt-client';
 // selenium

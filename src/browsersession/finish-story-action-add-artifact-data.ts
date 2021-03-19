@@ -20,10 +20,7 @@ export class FinishStoryActionAddArtifactData implements JsonSerializable {
     }
 
     public static failure(spanId: ActionSpanId, errorMsg: string, detail?: any) {
-        let result = {
-            "success": true // TODO is this correct?
-        };
-        return new FinishStoryActionAddArtifactData(spanId, result);
+        return new FinishStoryActionAddArtifactData(spanId, undefined, errorMsg, detail);
     }
 
     public asJson() {

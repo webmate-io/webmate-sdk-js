@@ -12,7 +12,7 @@ import {TestRunExecutionStatus} from "./test-run-execution-status";
 export class TestRun {
 
     private readonly MAX_WAITING_TIME_MILLIS: number = 300_000; // 300 seconds
-    private readonly WAITING_POLLINTERVAL_MILLIS: number = 2_000; // 2 seconds
+    private readonly WAITING_POLLINTERVAL_MILLIS: number = 3_000; // 3 seconds
     private readonly MAX_RETRIES: number = this.MAX_WAITING_TIME_MILLIS / this.WAITING_POLLINTERVAL_MILLIS;
 
     constructor(public readonly id: TestRunId, private readonly session: WebmateAPISession) {}
@@ -22,6 +22,15 @@ export class TestRun {
      */
     retrieveCurrentInfo(): Observable<TestRunInfo> {
         return this.session.testMgmt.getTestRun(this.id);
+    }
+
+    /**
+     * Set the name for a given test run.
+     *
+     * @param name New TestRun name.
+     */
+    setName(name: string): Observable<void> {
+        return this.session.testMgmt.setTestRunName(this.id, name);
     }
 
     /**
@@ -44,12 +53,12 @@ export class TestRun {
             mergeMap(() => this.retrieveCurrentInfo()),
             map(info => {
                 if (info.executionStatus == TestRunExecutionStatus.RUNNING || info.executionStatus == TestRunExecutionStatus.CREATED) {
-                    return info;
+                    throw new Error(`Could not get test run info within timeout.`);
                 } else {
-                    throw new Error(`Could not get test run info within timeout.`)
+                    return info;
                 }
             }),
             retryWhen(errors => concat(errors.pipe(delay(this.WAITING_POLLINTERVAL_MILLIS), take(this.MAX_RETRIES)), throwError(errors)))
-        )
+        );
     }
 }
