@@ -25,6 +25,15 @@ export class TestRun {
     }
 
     /**
+     * Set the name for a given test run.
+     *
+     * @param name New TestRun name.
+     */
+    setName(name: string): Observable<void> {
+        return this.session.testMgmt.setTestRunName(this.id, name);
+    }
+
+    /**
      * Finish TestRun.
      *
      * @param msg Short message explaining the result of the test run.
