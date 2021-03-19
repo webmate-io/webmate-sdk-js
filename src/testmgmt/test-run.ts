@@ -12,7 +12,7 @@ import {TestRunExecutionStatus} from "./test-run-execution-status";
 export class TestRun {
 
     private readonly MAX_WAITING_TIME_MILLIS: number = 300_000; // 300 seconds
-    private readonly WAITING_POLLINTERVAL_MILLIS: number = 3_000; // 2 seconds
+    private readonly WAITING_POLLINTERVAL_MILLIS: number = 3_000; // 3 seconds
     private readonly MAX_RETRIES: number = this.MAX_WAITING_TIME_MILLIS / this.WAITING_POLLINTERVAL_MILLIS;
 
     constructor(public readonly id: TestRunId, private readonly session: WebmateAPISession) {}
