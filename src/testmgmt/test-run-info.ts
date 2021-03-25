@@ -1,7 +1,7 @@
 import {
     ApplicationModelId,
     BrowserSessionId,
-    DateTime,
+    DateTime, DeviceId,
     ProjectId,
     TestExecutionId,
     TestRunId,
@@ -30,6 +30,7 @@ export class TestRunInfo {
                 public readonly expeditions: Array<BrowserSessionId>,
                 public readonly failure: any,
                 public readonly models: Array<ApplicationModelId>,
+                public readonly devices: Array<DeviceId>,
                 public readonly output?: any,
                 public readonly endTime?: DateTime) {
     }
@@ -49,6 +50,7 @@ export class TestRunInfo {
             json.expeditions,
             json.failure,
             json.models,
+            json.devices,
             json.output,
             json.endTime);
     }
@@ -70,6 +72,7 @@ export class TestRunInfo {
             ", expeditions=" + this.expeditions +
             ", failure=" + this.failure +
             ", models=" + this.models +
+            ", devices=" + this.devices +
             ", projectId=" + this.projectId +
             '}';
     }
