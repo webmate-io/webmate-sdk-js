@@ -1,7 +1,7 @@
 import {
     ApplicationModelId,
     BrowserSessionId,
-    DateTime, DeviceId,
+    DateTime, DeviceId, DeviceSlotId,
     ProjectId,
     TestExecutionId,
     TestRunId,
@@ -10,6 +10,16 @@ import {
 import {TestRunEvaluationStatus} from "./test-run-evaluation-status";
 import {TestType} from "./testtypes/test-type";
 import {TestRunExecutionStatus} from "./test-run-execution-status";
+import {DeviceRequest} from "../device/device-request";
+
+export interface TestRunDeviceInfo {
+    id: DeviceId,
+    creationTime: DateTime,
+    name: string,
+    request: DeviceRequest,
+    metaData: any,
+    properties: any,
+}
 
 /**
  * Identifies TestRun in a Test.
@@ -30,7 +40,7 @@ export class TestRunInfo {
                 public readonly expeditions: Array<BrowserSessionId>,
                 public readonly failure: any,
                 public readonly models: Array<ApplicationModelId>,
-                public readonly devices: Array<DeviceId>,
+                public readonly devices: Array<TestRunDeviceInfo>,
                 public readonly output?: any,
                 public readonly endTime?: DateTime) {
     }

@@ -2,6 +2,14 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
+## [0.29.3] - 2021-04-09
+- Fixed structure of test run device info.
+
+## [0.29.0] - 2021-02-22
+
+###New
+- Major overhaul of SDK
+
 ## [0.28.0] - 2020-02-11
 
 ###New
