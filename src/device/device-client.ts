@@ -65,6 +65,16 @@ export class DeviceClient {
     }
 
     /**
+     * Reset device. If the device is a mobile device, the device cleanup workflow will be started. In case of a desktop device, the
+     * machine will be rolled back to the latest snapshop, if one exists.
+     *
+     * @param deviceId DeviceId of device. Can be found in "Details" dialog of an item in webmate device overview.
+     */
+    public resetDevice(deviceId: DeviceId): Observable<void> {
+        return this.apiClient.releaseDevice(deviceId);
+    }
+
+    /**
      * Redeploy device. The device will be released and redeployed with the same properties as before.
      *
      * @param deviceId DeviceId of device. Can be found in "Details" dialog of an item in webmate device overview.
@@ -169,6 +179,7 @@ export class DeviceApiClient extends WebmateAPIClient {
     private requestDeviceByRequirementsForProjectRoute = new UriTemplate("/projects/${projectId}/device/devices");
     private synchronizeDeviceRoute = new UriTemplate("/device/devices/${deviceId}/sync");
     private releaseDeviceRoute = new UriTemplate("/device/devices/${deviceId}");
+    private resetDeviceRoute = new UriTemplate("/device/devices/${deviceId}/reset");
     private redeployDeviceRoute = new UriTemplate("/device/devices/${deviceId}/redeploy");
 
     private installAppOnDeviceRoute = new UriTemplate("/device/${deviceId}/appinstall/${packageId}");
@@ -194,6 +205,10 @@ export class DeviceApiClient extends WebmateAPIClient {
 
     public releaseDevice(deviceId: DeviceId): Observable<void> {
         return this.sendDELETE(this.releaseDeviceRoute, Map({"deviceId": deviceId}));
+    }
+
+    public resetDevice(deviceId: DeviceId): Observable<void> {
+        return this.sendPOST(this.resetDeviceRoute, Map({"deviceId": deviceId}));
     }
 
     public redeployDevice(deviceId: DeviceId): Observable<void> {
