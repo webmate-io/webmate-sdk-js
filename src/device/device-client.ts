@@ -27,6 +27,16 @@ export class DeviceClient {
     constructor(private session: WebmateAPISession) {}
 
     /**
+     * Get Device info for Device Id.
+     *
+     * @param deviceId Id of Device for which info should be fetched.
+     * @return device info.
+     */
+    public getDeviceInfo(deviceId: DeviceId): Observable<DeviceDTO> {
+        return this.apiClient.getDeviceInfo(deviceId);
+    }
+
+    /**
      * Get all Device ids for a project.
      *
      * @param projectId Id of Project (as found in dashboard), for which devices should be retrieved.
@@ -175,6 +185,7 @@ export class DeviceClient {
 
 export class DeviceApiClient extends WebmateAPIClient {
 
+    private getDeviceInfoRoute = new UriTemplate("/device/devices/${deviceId}");
     private getDeviceIdsForProjectRoute = new UriTemplate("/projects/${projectId}/device/devices");
     private requestDeviceByRequirementsForProjectRoute = new UriTemplate("/projects/${projectId}/device/devices");
     private synchronizeDeviceRoute = new UriTemplate("/device/devices/${deviceId}/sync");
@@ -189,6 +200,10 @@ export class DeviceApiClient extends WebmateAPIClient {
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
         super(authInfo, environment);
+    }
+
+    public getDeviceInfo(deviceId: DeviceId): Observable<DeviceDTO> {
+        return this.sendGET(this.getDeviceInfoRoute, Map({"deviceId": deviceId}));
     }
 
     public getDeviceIdsForProject(projectId: ProjectId): Observable<Array<DeviceId>> {
