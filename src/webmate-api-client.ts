@@ -70,6 +70,17 @@ export class WebmateAPIClient {
         );
     }
 
+    public sendPOSTStreamResponse(schema: UriTemplate, params: Map<string, string>, body?: Object, urlParams?: Map<string, string>): Observable<any> {
+        let config = this.getRequestConfig(urlParams);
+        config["responseType"] = "stream";
+
+        return from(axios.post(schema.buildUri(this.environment.baseUri, params), body, config)).pipe(
+            map((response: any) => {
+                return response.data
+            })
+        );
+    }
+
     public sendDELETE(schema: UriTemplate, params: Map<string, string>): Observable<any> {
         let config = this.getRequestConfig();
         return from(axios.delete(schema.buildUri(this.environment.baseUri, params), config));

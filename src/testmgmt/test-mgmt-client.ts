@@ -19,6 +19,7 @@ import {TestSession} from "./test-session";
 import {TestRunEvaluationStatus} from "./test-run-evaluation-status";
 import {TestRun} from "./test-run";
 import {TestExecutionSpecBuilder} from "./test-execution-spec-builder";
+import fs from "fs";
 
 export class SingleTestRunCreationSpec {
 
@@ -155,6 +156,13 @@ export class TestMgmtClient {
         return this.apiClient.finishTestRun(id, new TestRunFinishData(status, msg, detail));
     }
 
+    /**
+     * Generate an export for the given project using the specified exporter and config
+     */
+    testlabExport(projectId: ProjectId, exporter: string, config: Map<string, Object>, targetFilePath: string): Observable<void> {
+        return this.apiClient.testlabExport(projectId, exporter, config, targetFilePath);
+    }
+
 }
 
 class TestMgmtApiClient extends WebmateAPIClient {
@@ -169,6 +177,8 @@ class TestMgmtApiClient extends WebmateAPIClient {
     private finishTestRunTemplate = new UriTemplate( "/testmgmt/testruns/${testRunId}/finish", "FinishTestRun");
     private getTestRunTemplate = new UriTemplate( "/testmgmt/testruns/${testRunId}", "GetTestRun");
     private setTestRunNameTemplate = new UriTemplate("/testmgmt/testruns/${testRunId}/name", "SetTestRunName");
+
+    private exportTemplate = new UriTemplate("/projects/${projectId}/testlab/export/${exporter}", "TestMgmtExport");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
         super(authInfo, environment);
@@ -306,6 +316,19 @@ class TestMgmtApiClient extends WebmateAPIClient {
            "testRunId": id
         });
         return this.sendGET(this.getTestResultsTemplate, params).pipe(map(r => r.value));
+    }
+
+    testlabExport(projectId: ProjectId, exporter: string, config: Map<string, object>, targetFilePath: string): Observable<void> {
+        let params = Map({
+            "projectId": projectId,
+            "exporter": exporter
+        });
+        return this.sendPOSTStreamResponse(this.exportTemplate, params, config).pipe(map(resp => {
+            if (!resp) {
+                throw new Error('Could not export. Got no response');
+            }
+            resp.pipe(fs.createWriteStream(targetFilePath));
+        }));
     }
 
 }
