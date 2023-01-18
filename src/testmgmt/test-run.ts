@@ -52,7 +52,8 @@ export class TestRun {
         return of("").pipe(
             mergeMap(() => this.retrieveCurrentInfo()),
             map(info => {
-                if (info.executionStatus == TestRunExecutionStatus.RUNNING || info.executionStatus == TestRunExecutionStatus.CREATED) {
+                if (info.executionStatus == TestRunExecutionStatus.RUNNING || info.executionStatus == TestRunExecutionStatus.CREATED
+                    || info.executionStatus == TestRunExecutionStatus.PENDING_PASSED || info.executionStatus == TestRunExecutionStatus.PENDING_FAILED) {
                     throw new Error(`Could not get test run info within timeout.`);
                 } else {
                     return info;

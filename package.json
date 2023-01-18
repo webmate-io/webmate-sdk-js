@@ -1,6 +1,6 @@
 {
   "name": "webmate-sdk-js",
-  "version": "0.29.6",
+  "version": "0.29.7",
   "description": "A JavaScript and TypeScript SDK for communicating with the webmate API",
   "homepage": "https://github.com/webmate-io/webmate-sdk-js",
   "keywords": [
