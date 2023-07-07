@@ -4,7 +4,7 @@ import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
 import {ProjectId, TestRunId} from "../types";
 import {Map} from "immutable";
-import {TestMail, TestMailAddress} from "./mail-test-types";
+import {TestMail, TestMailAccount, TestMailAddress} from "./mail-test-types";
 import {combineLatest, Observable, of} from "rxjs";
 import {map, mergeMap, tap} from "rxjs/operators";
 import {ArtifactType} from "../artifacts/artifact-types";
@@ -27,7 +27,7 @@ export class MailTestClient {
      * @return email address associated with project and testrun.
      */
     public createTestMailAddress(projectId: ProjectId, testRunId: TestRunId): Observable<TestMailAddress> {
-        return this.apiClient.createTestMailAddressInProject(projectId, testRunId).pipe(tap(address => this.testMailAddress = address));
+        return this.apiClient.createTestMailAddressInProject(projectId, testRunId).pipe(tap(account => this.testMailAddress = account.emailAddress));
     }
 
     /**
@@ -52,7 +52,7 @@ export class MailTestApiClient extends WebmateAPIClient {
         super(authInfo, environment);
     }
 
-    public createTestMailAddressInProject(projectId: ProjectId, testRunId: TestRunId): Observable<TestMailAddress> {
+    public createTestMailAddressInProject(projectId: ProjectId, testRunId: TestRunId): Observable<TestMailAccount> {
         return this.sendPOST(this.createTestMailAddressInProjectTemplate, Map({"projectId": projectId}), {testRunId: testRunId});
     }
 

@@ -1,6 +1,11 @@
 import {Artifact} from "../artifacts/artifact-types";
+import {ProjectId, TestRunId, UserId} from "../types";
 
 export type TestMailAddress = string;
+
+export class TestMailAccount {
+    constructor(public emailAddress: TestMailAddress, public projectId: ProjectId, public creator: UserId, public optTestRunId?: TestRunId){}
+}
 
 export class TestMail {
 
