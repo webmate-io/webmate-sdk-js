@@ -27,7 +27,7 @@ export class MailTestClient {
      * @return email address associated with project and testrun.
      */
     public createTestMailAddress(projectId: ProjectId, testRunId: TestRunId): Observable<TestMailAddress> {
-        return this.apiClient.createTestMailAddressInProject(projectId, testRunId).pipe(tap(account => this.testMailAddress = account.emailAddress));
+        return this.apiClient.createTestMailAddressInProject(projectId, testRunId).pipe(map(account => this.testMailAddress = account.emailAddress));
     }
 
     /**
