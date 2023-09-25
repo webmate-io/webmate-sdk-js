@@ -16,7 +16,7 @@ export class ExpeditionComparisonSpec extends TestExecutionSpec {
 
     constructor(executionName: string, tags: Tag[], models: ApplicationModelId[], testSessions: TestSessionId[],
                         referenceSpec: ExpeditionSpec, compareSpecs: JsonSerializableArray<ExpeditionSpec>) {
-        super(executionName, StandardTestTypes.ExpeditionComparison.testType, "Default Expedition Comparison Test", tags, models, testSessions);
+        super(executionName, StandardTestTypes.ExpeditionComparison.testType, "Default Cross-Browser Test", tags, models, testSessions);
         this.referenceSpec = referenceSpec;
         this.compareSpecs = compareSpecs;
     }

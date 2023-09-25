@@ -2,6 +2,10 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
+## [0.29.9] - 2023-09-26
+### Fixes
+- Compatibility change for webmate release 2023.4.0
+
 ## [0.29.8] - 2023-07-11
 - Fix problem where testmails could not be created
 
