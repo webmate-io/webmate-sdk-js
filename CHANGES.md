@@ -2,6 +2,12 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
+## [0.29.10] - 2024-01-16
+### Fixes
+- Wait for test run creation/completion to finish
+  - Functions to create or finish a test run are now blocking
+  - Selenium actions will no longer go missing
+
 ## [0.29.9] - 2023-09-26
 ### Fixes
 - Compatibility change for webmate release 2023.4.0
