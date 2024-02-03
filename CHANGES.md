@@ -2,9 +2,10 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
-## [0.30.0] - 2024-02-02
+## [0.30.0] - 2024-02-05
 ### New
 - A function in the device client to configure the simulation of biometric authentication
+- Functions to retrieve the browser session info (including the device id) for a running Selenium test
 
 ## [0.29.10] - 2024-01-16
 ### Fixes
