@@ -159,6 +159,19 @@ export class DeviceClient {
     }
 
     /**
+     * Configure the biometrics simulation on a device.
+     *
+     * @param deviceId             The device id of the device.
+     * @param simulateBiometrics   True if the biometrics simulation should be enabled, false otherwise.
+     * @param acceptAuthentication True if the device should immediately accept the simulated authentication,
+     *                             false if the device should immediately reject the simulated authentication.
+     *                             Note that this flag only has any effect if <code>simulateBiometrics</code> is true.
+     */
+    setBiometricsSimulation(deviceId: DeviceId, simulateBiometrics: boolean, acceptAuthentication: boolean): Observable<void> {
+        return this.apiClient.setBiometricsSimulation(deviceId, simulateBiometrics, acceptAuthentication);
+    }
+
+    /**
      * Uploads an image to webmate, pushes it to a device and configures the camera simulation to use the image. The
      * image is defined by the given byte array and specified by the imageType. The uploaded image can be referenced by
      * the returned image id. The camera simulation will be enabled.
@@ -197,6 +210,7 @@ export class DeviceApiClient extends WebmateAPIClient {
     private uploadImageRoute = new UriTemplate("/projects/${projectId}/images");
     private uploadImageToDeviceRoute = new UriTemplate("/device/${deviceId}/image/${imageId}");
     private setCameraSimulationRoute = new UriTemplate("/device/devices/${deviceId}/capabilities");
+    private setBiometricsSimulationRoute = new UriTemplate("/device/devices/${deviceId}/capabilities");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
         super(authInfo, environment);
@@ -290,6 +304,15 @@ export class DeviceApiClient extends WebmateAPIClient {
         body[CapabilityConstants.MEDIA_SETTINGS] = imagePool.asJson();
 
         return this.sendPOST(this.setCameraSimulationRoute, params, body);
+    }
+
+    setBiometricsSimulation(deviceId: DeviceId, simulate: boolean, accept: boolean): Observable<void> {
+        const params = Map({"deviceId": deviceId});
+        const body = {
+            [CapabilityConstants.SIMULATE_BIOMETRICS]: simulate,
+            [CapabilityConstants.ACCEPT_BIOMETRICS]: accept
+        };
+        return this.sendPOST(this.setBiometricsSimulationRoute, params, body);
     }
 
 }

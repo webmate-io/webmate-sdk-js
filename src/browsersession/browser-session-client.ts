@@ -12,6 +12,7 @@ import {v4 as uuid} from 'uuid';
 import {StartStoryActionAddArtifactData} from "./start-story-action-add-artifact-data";
 import {tap} from "rxjs/operators";
 import {BrowserSessionRef} from "./browser-session-ref";
+import {BrowserSessionInfo} from "./browser-session-info";
 
 const DefaultStateExtractionConfig = new BrowserSessionStateExtractionConfig(
     undefined,
@@ -118,6 +119,16 @@ export class BrowserSessionClient {
         return this.apiClient.terminateSession(browserSessionId);
     }
 
+    /**
+     * Retrieves the browser session info for a given browser session.
+     *
+     * @param id The id of the browser session whose browser session info should be retrieved.
+     * @return   The browser session info for the given browser session.
+     */
+    public getBrowserSessionInfo(id: BrowserSessionId): Observable<BrowserSessionInfo> {
+        return this.apiClient.getBrowserSessionInfo(id);
+    }
+
 }
 
 class BrowserSessionApiClient extends WebmateAPIClient{
@@ -126,6 +137,7 @@ class BrowserSessionApiClient extends WebmateAPIClient{
     checkStateProgressTemplate: UriTemplate = new UriTemplate("/browsersession/${browserSessionId}/artifacts/${browserSessionArtifactId}/progress");
     addArtifactTemplate: UriTemplate = new UriTemplate("/browsersession/${expeditionId}/artifacts");
     terminateBrowsersessionTemplate: UriTemplate = new UriTemplate("/browsersession/${browserSessionId}");
+    retrieveBrowserSessionInfoTemplate: UriTemplate = new UriTemplate("/browsersession/${browserSessionId}/info");
 
     private millisToWait: number = 8000;
 
@@ -186,6 +198,10 @@ class BrowserSessionApiClient extends WebmateAPIClient{
         let body = {};
 
         return this.sendPOST(this.terminateBrowsersessionTemplate, params, body, queryParams);
+    }
+
+    public getBrowserSessionInfo(id: BrowserSessionId): Observable<BrowserSessionInfo> {
+        return this.sendGET(this.retrieveBrowserSessionInfoTemplate, Map({"browserSessionId": id}));
     }
 
 }

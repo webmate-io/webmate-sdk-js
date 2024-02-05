@@ -2,6 +2,7 @@ import {BrowserSessionId, BrowserSessionStateId} from "../types";
 import {WebmateAPISession} from "../webmate-api-session";
 import {BrowserSessionStateExtractionConfig} from "./browser-session-state-extraction-config";
 import {Observable} from "rxjs";
+import {BrowserSessionInfo} from "./browser-session-info";
 
 export class BrowserSessionRef {
 
@@ -49,6 +50,15 @@ export class BrowserSessionRef {
      */
     terminateSession(): Observable<boolean> {
         return this.session.browserSession.terminateBrowsersession(this.browserSessionId);
+    }
+
+    /**
+     * Retrieves the browser session info for this browser session.
+     *
+     * @return The browser session info for this browser session.
+     */
+    public getBrowserSessionInfo(): Observable<BrowserSessionInfo> {
+        return this.session.browserSession.getBrowserSessionInfo(this.browserSessionId);
     }
 
 }
