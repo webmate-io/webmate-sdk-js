@@ -2,6 +2,10 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
+## [0.30.1] - 2025-03-05
+### Fixes
+- Fix error when uploading large packages to webmate
+
 ## [0.30.0] - 2024-02-05
 ### New
 - A function in the device client to configure the simulation of biometric authentication

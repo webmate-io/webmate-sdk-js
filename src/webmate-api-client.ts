@@ -21,7 +21,9 @@ export class WebmateAPIClient {
                 'webmate.user': this.authInfo.emailAddress,
                 'webmate.api-token': this.authInfo.apiKey,
                 'content-type': 'application/json',
-            }
+            },
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
         };
 
         if (!!urlParams) {
@@ -65,7 +67,7 @@ export class WebmateAPIClient {
 
         return from(axios.post(schema.buildUri(this.environment.baseUri, params), readmeStream, config)).pipe(
             map((response: any) => {
-                return response.data
+                return response.data;
             })
         );
     }
