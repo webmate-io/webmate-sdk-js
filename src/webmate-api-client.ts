@@ -119,3 +119,13 @@ export class UriTemplate {
         return uri.toString();
     }
 }
+
+export interface ApiPaginationInfo {
+  nextLink?: string,
+  prevLink?: string,
+}
+
+export interface PaginatedApiResult<T> {
+  links?: ApiPaginationInfo,
+  data: Array<T>
+}
