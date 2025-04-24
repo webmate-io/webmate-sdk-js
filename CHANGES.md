@@ -2,6 +2,10 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
+## [0.31.0] - 2025-04-24
+### Updates
+- Updated route to query artifacts to use a non-deprecated api route
+
 ## [0.30.1] - 2025-03-05
 ### Fixes
 - Fix error when uploading large packages to webmate
