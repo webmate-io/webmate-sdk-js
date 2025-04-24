@@ -1,11 +1,12 @@
 import {WebmateAPISession} from "../webmate-api-session";
-import {UriTemplate, WebmateAPIClient} from "../webmate-api-client";
+import {PaginatedApiResult, UriTemplate, WebmateAPIClient} from "../webmate-api-client";
 import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
 import {ArtifactId, BrowserSessionId, ProjectId, TestRunId} from "../types";
 import {Observable} from "rxjs";
 import {Artifact, ArtifactInfo, ArtifactType} from "./artifact-types";
 import {Map} from "immutable";
+import {map} from "rxjs/operators";
 
 /**
  * Facade to webmate's Artifact subsystem.
@@ -47,7 +48,7 @@ export class ArtifactClient {
 
 export class ArtifactApiClient extends WebmateAPIClient {
 
-    private queryArtifactsTemplate = new UriTemplate("/projects/${projectId}/artifacts");
+    private queryArtifactsTemplate = new UriTemplate("/projects/${projectId}/artifact-infos");
     private getArtifactTemplate = new UriTemplate("/artifact/artifacts/${artifactId}");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
@@ -68,7 +69,7 @@ export class ArtifactApiClient extends WebmateAPIClient {
             queryparams["types"] = artifactTypes.map(t => t.asSerializedString()).join(",");
         }
 
-        return this.sendGET(this.queryArtifactsTemplate, params, Map(queryparams));
+        return this.sendGET(this.queryArtifactsTemplate, params, Map(queryparams)).pipe(map(result => (result as PaginatedApiResult<ArtifactInfo>).data));
     }
 
     public getArtifact(id: ArtifactId): Observable<Artifact> {
