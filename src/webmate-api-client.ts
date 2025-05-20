@@ -15,7 +15,7 @@ export class WebmateAPIClient {
     constructor(private authInfo: WebmateAuthInfo, private environment: WebmateEnvironment) {}
 
     private getRequestConfig(urlParams?: Map<string, string>, contentType?: string): AxiosRequestConfig {
-        let config: AxiosRequestConfig = {
+        const config: AxiosRequestConfig = {
             headers: {
                 'User-Agent': 'webmate-js-sdk',
                 'webmate.user': this.authInfo.emailAddress,
@@ -35,7 +35,7 @@ export class WebmateAPIClient {
         }
 
         if (!!contentType) {
-            config['headers']['content-type'] = contentType;
+            config.headers!['content-type'] = contentType;
         }
 
         return config;
