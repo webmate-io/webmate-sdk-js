@@ -1,5 +1,5 @@
 export class WebmateAuthInfo {
 
-    public constructor(public emailAddress: string, public apiKey: string) {}
+    public constructor(public apiKey: string) {}
 
 }

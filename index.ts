@@ -92,8 +92,8 @@ export * from './src/testmgmt/test-session';
 export * from './src/testmgmt/test-template';
 export * from './src/testmgmt/test-template-info';
 
-export function startSession(emailAddress: string, apiKey: string, baseUri?: string, projectId?: ProjectId): WebmateAPISession {
+export function startSession(apiKey: string, baseUri?: string, projectId?: ProjectId): WebmateAPISession {
     let env = new WebmateEnvironment(baseUri);
-    let auth = new WebmateAuthInfo(emailAddress, apiKey);
+    let auth = new WebmateAuthInfo(apiKey);
     return new WebmateAPISession(auth, env, projectId);
 }

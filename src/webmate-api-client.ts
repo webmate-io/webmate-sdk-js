@@ -18,7 +18,6 @@ export class WebmateAPIClient {
         const config: AxiosRequestConfig = {
             headers: {
                 'User-Agent': 'webmate-js-sdk',
-                'webmate.user': this.authInfo.emailAddress,
                 'webmate.api-token': this.authInfo.apiKey,
                 'content-type': 'application/json',
             },
