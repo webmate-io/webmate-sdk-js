@@ -2,6 +2,11 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
+## [0.33.1] - 2025-09-17
+### Updates
+- Update dependencies with critical vulnerabilities
+- Pin dependency version as a preventive measure for Shai-Hulud
+
 ## [0.33.0] - 2025-07-10
 ### Fixes
 - Make email address optional in WebmateAuthInfo
