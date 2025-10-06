@@ -20,6 +20,7 @@ const DefaultStateExtractionConfig = new BrowserSessionStateExtractionConfig(
     undefined,
     undefined,
     undefined,
+    undefined,
     true,
     new BrowserSessionScreenshotExtractionConfig(false, false),
     undefined);
