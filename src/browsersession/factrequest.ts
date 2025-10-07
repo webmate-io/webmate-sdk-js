@@ -20,7 +20,9 @@ export class FactRequest {
             'factType': this.factType
         };
         if (this.params) {
-            json['params'] = this.params;
+            json['params'] = {
+                value: this.params
+            };
         }
         return json;
     }
