@@ -9,10 +9,10 @@ export class BrowserSessionStateExtractionConfig {
                        public extractionDelay?: number,
                        public extractionCooldown?: number,
                        public optViewportDimension?: Dimension,
-                       public requestedFacts?: FactRequest[],
                        public maxAdditionWaitingTimeForStateExtraction?: number,
                        public extractDomStateData?: boolean,
                        public screenShotConfig?: BrowserSessionScreenshotExtractionConfig,
-                       public warmUpConfig?: BrowserSessionWarmUpConfig) {
+                       public warmUpConfig?: BrowserSessionWarmUpConfig,
+                       public requestedFacts?: FactRequest[]) {
     }
 }
