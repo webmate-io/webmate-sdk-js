@@ -20,9 +20,9 @@ const DefaultStateExtractionConfig = new BrowserSessionStateExtractionConfig(
     undefined,
     undefined,
     undefined,
-    undefined,
     true,
     new BrowserSessionScreenshotExtractionConfig(false, false),
+    undefined,
     undefined);
 
 const DefaultBrowserSessionTimeoutMillis = 5 * 60 * 1000; // Default timeout: 5 minutes
