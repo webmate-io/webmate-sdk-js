@@ -3,14 +3,16 @@ import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
 import {UriTemplate, WebmateAPIClient} from "../webmate-api-client";
 import {DeviceId, ImageId, PackageId, ProjectId} from "../types";
-import {Observable} from "rxjs";
+import {concat, Observable, of, throwError} from "rxjs";
 import {Map} from "immutable";
 import {DeviceRequest} from "./device-request";
 import {DeviceDTO} from "./device-dto";
 import {ImageType} from "../packagemgmt/image-type";
-import {map, mergeMap} from "rxjs/operators";
+import {delay, map, mergeMap, retryWhen, take} from "rxjs/operators";
 import {ImagePool} from "../packagemgmt/image-pool";
-import {CapabilityConstants} from "./CapabilityConstants";
+import {DevicePropertyNames} from "./device-properties";
+import {Package} from "../packagemgmt/package";
+import {v4 as uuid} from "uuid";
 
 /**
  * Facade to webmate's Device subsystem.
@@ -18,6 +20,8 @@ import {CapabilityConstants} from "./CapabilityConstants";
 export class DeviceClient {
 
     private apiClient: DeviceApiClient = new DeviceApiClient(this.session.authInfo, this.session.environment);
+    private readonly INSTALL_WAITING_POLLING_INTERVAL_MILLIS = 5000;
+    private readonly MAX_INSTALL_WAITING_TIME_MILLIS = 10 * 60 * 1000;
 
     /**
      * Creates a DeviceClient based on a WebmateApiSession.
@@ -94,15 +98,26 @@ export class DeviceClient {
     }
 
     /**
-     * Install the app wit the given Id on a device. If instrumented is set to true, the instrumented version will be
-     * used if available.
+     * Write the app-install requirement for the given device. If instrumented is set to true, the instrumented version
+     * will be used if available.
+     * This method blocks until the device reports the package as installed or a timeout occurs.
      *
      * @param deviceId DeviceId of device. Can be found in "Details" dialog of an item in webmate device overview.
      * @param appId Id of app to be installed. Can be found in App management of the webmate device overview.
      * @param instrumented If true, the instrumented version of the app will be installed, if available.
      */
     installAppOnDevice(deviceId: DeviceId, appId: PackageId, instrumented: boolean = false): Observable<void> {
-        return this.apiClient.installAppOnDevice(deviceId, appId, instrumented);
+        return this.session.packages.getPackage(appId).pipe(mergeMap((appPackage: Package) => {
+            const resolvedPackageId = instrumented && appPackage.instrumentedPackageId ? appPackage.instrumentedPackageId : appId;
+            const resolvedPackageType = instrumented && appPackage.instrumentedPackageType ?
+                appPackage.instrumentedPackageType : appPackage.origPackageType;
+            if (!resolvedPackageType) {
+                throw new Error(`Could not determine package type for package ${resolvedPackageId}.`);
+            }
+            return this.apiClient.installAppOnDevice(deviceId, resolvedPackageId, resolvedPackageType).pipe(
+                mergeMap(() => this.waitForInstalledPackage(deviceId, resolvedPackageId))
+            );
+        }));
     }
 
     /**
@@ -148,6 +163,7 @@ export class DeviceClient {
 
     /**
      * Configure the camera simulation to use the given selectedImageId. The simulation can be enabled or disabled.
+     * The SDK writes the required device properties sequentially.
      *
      * @param deviceId DeviceId of device. Can be found in "Details" dialog of an item in webmate device overview.
      * @param selectedImageId Image id of an already uploaded image. The parameter sets the image that is to be used for
@@ -160,6 +176,7 @@ export class DeviceClient {
 
     /**
      * Configure the biometrics simulation on a device.
+     * The SDK writes the required device properties sequentially.
      *
      * @param deviceId             The device id of the device.
      * @param simulateBiometrics   True if the biometrics simulation should be enabled, false otherwise.
@@ -188,10 +205,48 @@ export class DeviceClient {
                                                                     deviceId: DeviceId): Observable<ImageId> {
 
         return this.apiClient.uploadImageToDeviceWithFilePath(projectId, imageFilePath, imageName, imageType, deviceId).pipe(
-            mergeMap(imageId => {
+            mergeMap((imageId: string) => {
                 return this.apiClient.setCameraSimulation(deviceId, imageId, true, new ImagePool(imageId)).pipe(map(_ => imageId));
             })
         );
+    }
+
+    private waitForInstalledPackage(deviceId: DeviceId, packageId: PackageId, maxWaitingTimeMillis?: number): Observable<void> {
+        if (!maxWaitingTimeMillis) maxWaitingTimeMillis = this.MAX_INSTALL_WAITING_TIME_MILLIS;
+        const maxRetries: number = maxWaitingTimeMillis / this.INSTALL_WAITING_POLLING_INTERVAL_MILLIS;
+        return of("").pipe(
+            mergeMap(() => this.apiClient.getDeviceInfo(deviceId)),
+            map((deviceInfo: DeviceDTO) => {
+                if (!this.isPackageInstalled(deviceInfo, packageId)) {
+                    throw new Error(`Package ${packageId} is not reported as installed yet.`);
+                }
+            }),
+            retryWhen((errors: { pipe: (arg0: any, arg1: any) => any; }) => concat(
+                errors.pipe(delay(this.INSTALL_WAITING_POLLING_INTERVAL_MILLIS), take(maxRetries)),
+                throwError(errors)
+            ))
+        );
+    }
+
+    private isPackageInstalled(deviceInfo: DeviceDTO, packageId: PackageId): boolean {
+        const installedPackagesProperty = deviceInfo.properties && deviceInfo.properties[DevicePropertyNames.InstalledPackages];
+        const installedPackages = this.normalizeInstalledPackages(installedPackagesProperty);
+        return installedPackages.some((installedPackage: any) => {
+            return installedPackage && installedPackage.packageId === packageId && installedPackage.state === "finished";
+        });
+    }
+
+    private normalizeInstalledPackages(installedPackagesProperty: any): any[] {
+        if (!installedPackagesProperty) {
+            return [];
+        }
+        if (Array.isArray(installedPackagesProperty)) {
+            return installedPackagesProperty;
+        }
+        if (Array.isArray(installedPackagesProperty.installedPackages)) {
+            return installedPackagesProperty.installedPackages;
+        }
+        return [installedPackagesProperty];
     }
 
 }
@@ -206,11 +261,9 @@ export class DeviceApiClient extends WebmateAPIClient {
     private resetDeviceRoute = new UriTemplate("/device/devices/${deviceId}/reset");
     private redeployDeviceRoute = new UriTemplate("/device/devices/${deviceId}/redeploy");
 
-    private installAppOnDeviceRoute = new UriTemplate("/device/${deviceId}/appinstall/${packageId}");
+    private setDevicePropertyRequirementRoute = new UriTemplate("/device/devices/${deviceId}/requirements/propertyRequirement");
     private uploadImageRoute = new UriTemplate("/projects/${projectId}/images");
     private uploadImageToDeviceRoute = new UriTemplate("/device/${deviceId}/image/${imageId}");
-    private setCameraSimulationRoute = new UriTemplate("/device/devices/${deviceId}/capabilities");
-    private setBiometricsSimulationRoute = new UriTemplate("/device/devices/${deviceId}/capabilities");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
         super(authInfo, environment);
@@ -244,17 +297,20 @@ export class DeviceApiClient extends WebmateAPIClient {
         return this.sendPOST(this.redeployDeviceRoute, Map({"deviceId": deviceId}));
     }
 
-    installAppOnDevice(deviceId: DeviceId, appId: PackageId, instrumented: boolean): Observable<void> {
+    installAppOnDevice(deviceId: DeviceId, appId: PackageId, packageType: string): Observable<void> {
         let params = Map({
-            "deviceId": deviceId,
-            "packageId": appId
+            "deviceId": deviceId
         });
-        let queryParams = Map({
-            "wait": "true",
-            "instrumented": String(instrumented)
-        });
+        const body = {
+            [DevicePropertyNames.InstalledPackages]: {
+                "installationId": uuid(),
+                "packageId": appId,
+                "packageType": packageType,
+                "state": "finished"
+            }
+        };
 
-        return this.sendPOST(this.installAppOnDeviceRoute, params, undefined, queryParams);
+        return this.sendPOST(this.setDevicePropertyRequirementRoute, params, body);
     }
 
     uploadImage(projectId: ProjectId, imageFilePath: string, imageName: string, imageType: ImageType): Observable<ImageId> {
@@ -280,7 +336,7 @@ export class DeviceApiClient extends WebmateAPIClient {
     uploadImageToDeviceWithFilePath(projectId: ProjectId, imageFilePath: string, imageName: string, imageType: ImageType,
                                     deviceId: DeviceId): Observable<ImageId> {
         return this.uploadImage(projectId, imageFilePath, imageName, imageType).pipe(
-            mergeMap(imageId => {
+            mergeMap((imageId: string) => {
                 return this.uploadImageToDevice(deviceId, imageId).pipe(map(_ => {
                     return imageId;
                 }));
@@ -295,24 +351,33 @@ export class DeviceApiClient extends WebmateAPIClient {
         let params = Map({
             "deviceId": deviceId
         });
-        let body: any = {};
         let selectedImageId = !imageId ? null : imageId;
-        body[CapabilityConstants.SIMULATE_CAMERA] = {
-            "enabled": simulate,
-            "selectedImage": selectedImageId
+        const mediaSettingsBody = {
+            [DevicePropertyNames.MediaSettings]: imagePool.asJson()
         };
-        body[CapabilityConstants.MEDIA_SETTINGS] = imagePool.asJson();
+        const cameraSimulationBody = {
+            [DevicePropertyNames.SimulateCamera]: {
+                "enabled": simulate,
+                "selectedImage": selectedImageId
+            }
+        };
 
-        return this.sendPOST(this.setCameraSimulationRoute, params, body);
+        return this.sendPOST(this.setDevicePropertyRequirementRoute, params, mediaSettingsBody).pipe(mergeMap(() => {
+            return this.sendPOST(this.setDevicePropertyRequirementRoute, params, cameraSimulationBody);
+        }));
     }
 
     setBiometricsSimulation(deviceId: DeviceId, simulate: boolean, accept: boolean): Observable<void> {
         const params = Map({"deviceId": deviceId});
-        const body = {
-            [CapabilityConstants.SIMULATE_BIOMETRICS]: simulate,
-            [CapabilityConstants.ACCEPT_BIOMETRICS]: accept
+        const simulateBiometricsBody = {
+            [DevicePropertyNames.SimulateBiometrics]: simulate
         };
-        return this.sendPOST(this.setBiometricsSimulationRoute, params, body);
+        const acceptBiometricsBody = {
+            [DevicePropertyNames.BiometricAuthentication]: accept
+        };
+        return this.sendPOST(this.setDevicePropertyRequirementRoute, params, simulateBiometricsBody).pipe(mergeMap(() => {
+            return this.sendPOST(this.setDevicePropertyRequirementRoute, params, acceptBiometricsBody);
+        }));
     }
 
 }

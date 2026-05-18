@@ -21,6 +21,7 @@ export const DevicePropertyNames = {
     Language: 'os.language',
     Locale: 'os.locale',
     InstallPackages: 'os.canInstallPackages',
+    InstalledPackages: 'package.installedPackages',
 
     MaxExpeditionCapacity: 'automation.maxExpeditionCapacity',
     MaxInstancesPerBrowser: 'automation.maxInstancesPerBrowser',
