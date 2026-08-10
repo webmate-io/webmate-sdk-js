@@ -31,6 +31,10 @@ export class PackageMgmtClient {
         return this.apiClient.getPackage(packageId);
     }
 
+    getPackagesForProject(projectId: ProjectId): Observable<Package[]> {
+        return this.apiClient.getPackagesForProject(projectId);
+    }
+
     uploadPackage(projectId: ProjectId, filePath: string, packageName: string, extension: string): Observable<Package> {
         let contentType = extension === "apk" ? "application/vnd.android.package-archive" : "application/x-ios-app";
         let blobClient = new BlobClient(this.session);
@@ -45,6 +49,7 @@ class PackageMgmtApiClient extends WebmateAPIClient {
 
     private createPackageTemplate = new UriTemplate("/projects/${projectId}/packages");
     private getPackageTemplate = new UriTemplate("/package/packages/${packageId}");
+    private getPackagesForProjectTemplate = new UriTemplate("/projects/${projectId}/packages/full");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
         super(authInfo, environment);
@@ -68,6 +73,14 @@ class PackageMgmtApiClient extends WebmateAPIClient {
             "packageId": packageId
         });
         return this.sendGET(this.getPackageTemplate, params);
+    }
+
+    getPackagesForProject(projectId: ProjectId): Observable<Package[]> {
+        let params = Map({
+            "projectId": projectId
+        });
+
+        return this.sendGET(this.getPackagesForProjectTemplate, params);
     }
 
 }
