@@ -2,6 +2,10 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
+## [0.33.3] - 2026-08-11
+### New Features
+- New method `packages.getPackagesForProject` that allows to query complete info for all packages of a given Project
+
 ## [0.33.2] - 2025-10-06
 ### New Features
 - `BrowserSessionStateExtractionConfig` does now accept an optional array of `requestedFacts` that can be used to trigger analysis plugins ("fact agents)".
