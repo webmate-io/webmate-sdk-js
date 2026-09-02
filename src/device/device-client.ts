@@ -280,7 +280,7 @@ export class DeviceApiClient extends WebmateAPIClient {
     }
 
     public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest, useDeployed?: boolean): Observable<DeviceDTO> {
-        let queryParams = useDeployed === undefined ? undefined : Map({"useDeployed": String(useDeployed)});
+        let queryParams = useDeployed == null ? undefined : Map({"useDeployed": String(useDeployed)});
         return this.sendPOST(this.requestDeviceByRequirementsForProjectRoute, Map({"projectId": projectId}), deviceRequest.asJson(), queryParams);
     }
 
