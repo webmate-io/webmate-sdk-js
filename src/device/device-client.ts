@@ -55,9 +55,11 @@ export class DeviceClient {
      *
      * @param projectId Id of Project (as found in dashboard), for which devices should be retrieved.
      * @param deviceRequest Contains the defined device properties.
+     * @param useDeployed If true, an already deployed device matching the requirements may be reused instead of
+     *                     deploying a new one.
      */
-    public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest): Observable<DeviceDTO> {
-        return this.apiClient.requestDeviceByRequirements(projectId, deviceRequest);
+    public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest, useDeployed?: boolean): Observable<DeviceDTO> {
+        return this.apiClient.requestDeviceByRequirements(projectId, deviceRequest, useDeployed);
     }
 
     /**
@@ -277,8 +279,9 @@ export class DeviceApiClient extends WebmateAPIClient {
         return this.sendGET(this.getDeviceIdsForProjectRoute, Map({"projectId": projectId}));
     }
 
-    public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest): Observable<DeviceDTO> {
-        return this.sendPOST(this.requestDeviceByRequirementsForProjectRoute, Map({"projectId": projectId}), deviceRequest.asJson());
+    public requestDeviceByRequirements(projectId: ProjectId, deviceRequest: DeviceRequest, useDeployed?: boolean): Observable<DeviceDTO> {
+        let queryParams = useDeployed == null ? undefined : Map({"useDeployed": String(useDeployed)});
+        return this.sendPOST(this.requestDeviceByRequirementsForProjectRoute, Map({"projectId": projectId}), deviceRequest.asJson(), queryParams);
     }
 
     public synchronizeDevice(deviceId: DeviceId): Observable<void> {
