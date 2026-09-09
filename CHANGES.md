@@ -2,7 +2,7 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
-## [Unreleased]
+## [0.34.0] - 2026-9-9
 ### New Features
 - `DeviceClient.requestDeviceByRequirements` accepts an optional `useDeployed` flag, passed through to the API as a query parameter
 
