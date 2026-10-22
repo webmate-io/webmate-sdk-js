@@ -2,6 +2,14 @@
 
 All notable changes to the webmate JavaScript SDK will be documented in this file.
 
+## [Unreleased]
+### New Features
+- New method `packages.deletePackage` that deletes a package
+### Bug Fixes
+- `DeviceClient.resetDevice` now resets the device; it used to release it instead
+- `DeviceClient.installAppOnDevice` now installs the package's `origPackageId` instead of the package document id when `instrumented` is false, so the installation succeeds and the wait for it completes.
+- `DeviceClient.installAppOnDevice` now waits for the installation it requested (matched by installation id) instead of returning as soon as the device reports any finished installation of the same package. It fails immediately if the device reports the installation as failed, and with a descriptive error on timeout.
+
 ## [0.34.0] - 2026-9-9
 ### New Features
 - `DeviceClient.requestDeviceByRequirements` accepts an optional `useDeployed` flag, passed through to the API as a query parameter

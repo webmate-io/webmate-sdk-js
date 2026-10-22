@@ -3,12 +3,12 @@ import {WebmateAuthInfo} from "../webmate-auth-info";
 import {WebmateEnvironment} from "../webmate-environment";
 import {UriTemplate, WebmateAPIClient} from "../webmate-api-client";
 import {DeviceId, ImageId, PackageId, ProjectId} from "../types";
-import {concat, Observable, of, throwError} from "rxjs";
+import {Observable, of, throwError, timer} from "rxjs";
 import {Map} from "immutable";
 import {DeviceRequest} from "./device-request";
 import {DeviceDTO} from "./device-dto";
 import {ImageType} from "../packagemgmt/image-type";
-import {delay, map, mergeMap, retryWhen, take} from "rxjs/operators";
+import {map, mergeMap, retryWhen} from "rxjs/operators";
 import {ImagePool} from "../packagemgmt/image-pool";
 import {DevicePropertyNames} from "./device-properties";
 import {Package} from "../packagemgmt/package";
@@ -87,7 +87,7 @@ export class DeviceClient {
      * @param deviceId DeviceId of device. Can be found in "Details" dialog of an item in webmate device overview.
      */
     public resetDevice(deviceId: DeviceId): Observable<void> {
-        return this.apiClient.releaseDevice(deviceId);
+        return this.apiClient.resetDevice(deviceId);
     }
 
     /**
@@ -110,14 +110,16 @@ export class DeviceClient {
      */
     installAppOnDevice(deviceId: DeviceId, appId: PackageId, instrumented: boolean = false): Observable<void> {
         return this.session.packages.getPackage(appId).pipe(mergeMap((appPackage: Package) => {
-            const resolvedPackageId = instrumented && appPackage.instrumentedPackageId ? appPackage.instrumentedPackageId : appId;
+            // appId identifies the package document; the requirement has to name the concrete package to install.
+            const resolvedPackageId = instrumented && appPackage.instrumentedPackageId ?
+                appPackage.instrumentedPackageId : appPackage.origPackageId;
             const resolvedPackageType = instrumented && appPackage.instrumentedPackageType ?
                 appPackage.instrumentedPackageType : appPackage.origPackageType;
             if (!resolvedPackageType) {
                 throw new Error(`Could not determine package type for package ${resolvedPackageId}.`);
             }
             return this.apiClient.installAppOnDevice(deviceId, resolvedPackageId, resolvedPackageType).pipe(
-                mergeMap(() => this.waitForInstalledPackage(deviceId, resolvedPackageId))
+                mergeMap((installationId: string) => this.waitForInstalledPackage(deviceId, resolvedPackageId, installationId))
             );
         }));
     }
@@ -213,29 +215,47 @@ export class DeviceClient {
         );
     }
 
-    private waitForInstalledPackage(deviceId: DeviceId, packageId: PackageId, maxWaitingTimeMillis?: number): Observable<void> {
+    /**
+     * Wait until the device reports the installation with the given id as finished. Matching on the installation id
+     * (rather than the package id) ensures that a previous installation of the same package is not mistaken for the
+     * one that has just been requested. Fails if the device reports the installation as failed or on timeout.
+     */
+    private waitForInstalledPackage(deviceId: DeviceId, packageId: PackageId, installationId: string, maxWaitingTimeMillis?: number): Observable<void> {
         if (!maxWaitingTimeMillis) maxWaitingTimeMillis = this.MAX_INSTALL_WAITING_TIME_MILLIS;
         const maxRetries: number = maxWaitingTimeMillis / this.INSTALL_WAITING_POLLING_INTERVAL_MILLIS;
+        const notInstalledYet = new Error(`Package ${packageId} is not reported as installed yet.`);
         return of("").pipe(
             mergeMap(() => this.apiClient.getDeviceInfo(deviceId)),
             map((deviceInfo: DeviceDTO) => {
-                if (!this.isPackageInstalled(deviceInfo, packageId)) {
-                    throw new Error(`Package ${packageId} is not reported as installed yet.`);
+                const state = this.getInstallationState(deviceInfo, installationId);
+                if (state === "failed") {
+                    throw new Error(`Installation of package ${packageId} on device ${deviceId} failed.`);
+                }
+                if (state !== "finished") {
+                    throw notInstalledYet;
                 }
             }),
-            retryWhen((errors: { pipe: (arg0: any, arg1: any) => any; }) => concat(
-                errors.pipe(delay(this.INSTALL_WAITING_POLLING_INTERVAL_MILLIS), take(maxRetries)),
-                throwError(errors)
+            retryWhen((errors: Observable<any>) => errors.pipe(
+                mergeMap((error: any, retry: number) => {
+                    if (error !== notInstalledYet) {
+                        return throwError(error);
+                    }
+                    if (retry >= maxRetries) {
+                        return throwError(new Error(`Package ${packageId} was not installed on device ${deviceId} within ${maxWaitingTimeMillis} ms.`));
+                    }
+                    return timer(this.INSTALL_WAITING_POLLING_INTERVAL_MILLIS);
+                })
             ))
         );
     }
 
-    private isPackageInstalled(deviceInfo: DeviceDTO, packageId: PackageId): boolean {
+    private getInstallationState(deviceInfo: DeviceDTO, installationId: string): string | undefined {
         const installedPackagesProperty = deviceInfo.properties && deviceInfo.properties[DevicePropertyNames.InstalledPackages];
         const installedPackages = this.normalizeInstalledPackages(installedPackagesProperty);
-        return installedPackages.some((installedPackage: any) => {
-            return installedPackage && installedPackage.packageId === packageId && installedPackage.state === "finished";
+        const installation = installedPackages.find((installedPackage: any) => {
+            return installedPackage && installedPackage.installationId === installationId;
         });
+        return installation ? installation.state : undefined;
     }
 
     private normalizeInstalledPackages(installedPackagesProperty: any): any[] {
@@ -300,20 +320,24 @@ export class DeviceApiClient extends WebmateAPIClient {
         return this.sendPOST(this.redeployDeviceRoute, Map({"deviceId": deviceId}));
     }
 
-    installAppOnDevice(deviceId: DeviceId, appId: PackageId, packageType: string): Observable<void> {
+    /**
+     * Writes the requirement to install the given package on the device and returns the id of the requested installation.
+     */
+    installAppOnDevice(deviceId: DeviceId, appId: PackageId, packageType: string): Observable<string> {
         let params = Map({
             "deviceId": deviceId
         });
+        const installationId: string = uuid();
         const body = {
             [DevicePropertyNames.InstalledPackages]: {
-                "installationId": uuid(),
+                "installationId": installationId,
                 "packageId": appId,
                 "packageType": packageType,
                 "state": "finished"
             }
         };
 
-        return this.sendPOST(this.setDevicePropertyRequirementRoute, params, body);
+        return this.sendPOST(this.setDevicePropertyRequirementRoute, params, body).pipe(map(() => installationId));
     }
 
     uploadImage(projectId: ProjectId, imageFilePath: string, imageName: string, imageType: ImageType): Observable<ImageId> {

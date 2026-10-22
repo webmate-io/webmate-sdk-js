@@ -5,7 +5,7 @@ import {Observable} from "rxjs";
 import {Package} from "./package";
 import {BlobId, PackageId, ProjectId} from "../types";
 import {Map} from "immutable";
-import {mergeMap} from "rxjs/operators";
+import {map, mergeMap} from "rxjs/operators";
 import {WebmateAPISession} from "../webmate-api-session";
 import {BlobClient} from "../blobs/blob-client";
 
@@ -35,6 +35,15 @@ export class PackageMgmtClient {
         return this.apiClient.getPackagesForProject(projectId);
     }
 
+    /**
+     * Delete the package with the given id.
+     *
+     * @param packageId Id of the package to be deleted.
+     */
+    deletePackage(packageId: PackageId): Observable<void> {
+        return this.apiClient.deletePackage(packageId);
+    }
+
     uploadPackage(projectId: ProjectId, filePath: string, packageName: string, extension: string): Observable<Package> {
         let contentType = extension === "apk" ? "application/vnd.android.package-archive" : "application/x-ios-app";
         let blobClient = new BlobClient(this.session);
@@ -50,6 +59,7 @@ class PackageMgmtApiClient extends WebmateAPIClient {
     private createPackageTemplate = new UriTemplate("/projects/${projectId}/packages");
     private getPackageTemplate = new UriTemplate("/package/packages/${packageId}");
     private getPackagesForProjectTemplate = new UriTemplate("/projects/${projectId}/packages/full");
+    private deletePackageTemplate = new UriTemplate("/package/packages/${packageId}");
 
     constructor(authInfo: WebmateAuthInfo, environment: WebmateEnvironment) {
         super(authInfo, environment);
@@ -81,6 +91,13 @@ class PackageMgmtApiClient extends WebmateAPIClient {
         });
 
         return this.sendGET(this.getPackagesForProjectTemplate, params);
+    }
+
+    deletePackage(packageId: PackageId): Observable<void> {
+        let params = Map({
+            "packageId": packageId
+        });
+        return this.sendDELETE(this.deletePackageTemplate, params).pipe(map(() => undefined));
     }
 
 }
