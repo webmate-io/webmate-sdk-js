@@ -9,6 +9,7 @@ All notable changes to the webmate JavaScript SDK will be documented in this fil
 - `DeviceClient.resetDevice` now resets the device; it used to release it instead
 - `DeviceClient.installAppOnDevice` now installs the package's `origPackageId` instead of the package document id when `instrumented` is false, so the installation succeeds and the wait for it completes.
 - `DeviceClient.installAppOnDevice` now waits for the installation it requested (matched by installation id) instead of returning as soon as the device reports any finished installation of the same package. It fails immediately if the device reports the installation as failed, and with a descriptive error on timeout.
+- Support platform strings without an OS version, such as `LINUX`. `Platform.platformVersion` is now optional.
 
 ## [0.34.0] - 2026-9-9
 ### New Features

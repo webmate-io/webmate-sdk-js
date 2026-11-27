@@ -7,18 +7,18 @@ describe('Platform Tests', function() {
     it('should parse the platform strings correctly', function() {
         let platform_win_10_64 = Platform.fromString('WINDOWS_10_64');
         platform_win_10_64.platformType.should.eq('WINDOWS');
-        platform_win_10_64.platformVersion.should.eq('10');
+        expect(platform_win_10_64.platformVersion).to.equal('10');
         platform_win_10_64.platformArchitecture!.should.eq('64');
 
         let platform_win_10 = Platform.fromString('WINDOWS_10');
         platform_win_10.platformType.should.eq('WINDOWS');
-        platform_win_10.platformVersion.should.eq('10');
+        expect(platform_win_10.platformVersion).to.equal('10');
         assert.isUndefined(platform_win_10.platformArchitecture, 'Platform architecture must be undefined');
     });
 
     it('should throw an error for invalid platform strings', function() {
-        expect(() => Platform.fromString('WINDOWS')).to.throw();
-        expect(() => Platform.fromString('WINDOWS10')).to.throw();
+        expect(() => Platform.fromString('WINDOWS_')).to.throw();
+        expect(() => Platform.fromString('WINDOWS_10_64_20')).to.throw();
     });
 
     it('should correctly transform platform objects to strings', function() {
