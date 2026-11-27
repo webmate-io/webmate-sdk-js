@@ -73,7 +73,7 @@ describe('Expedition Comparison Spec Tests', function() {
     };
 
     function makeTestSpec(): TestExecutionSpec {
-        let session = startSession("email", "apikey", "http://localhost");
+        let session = startSession("apikey", "http://localhost");
 
         return ExpeditionComparisonCheckBuilder.builder(
             "test name",

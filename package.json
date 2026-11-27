@@ -19,7 +19,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",
-    "test": "mocha -r ts-node/register tests/**/*.ts",
+    "test": "mocha -r ts-node/register \"tests/**/*.ts\"",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
